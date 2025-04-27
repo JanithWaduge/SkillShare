@@ -44,7 +44,10 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8081/api/posts', newPost);
+      await axios.post('http://localhost:8081/api/posts', {
+        ...newPost,
+        mediaUrls: newPost.mediaUrls.filter(url => url && url.trim() !== ''), // Clean mediaUrls
+      });
       setShowForm(false);
       setNewPost({
         title: '',
@@ -115,6 +118,9 @@ function App() {
               </div>
               <h2 className="post-title">{post.title}</h2>
               <p className="post-description">{post.description}</p>
+
+              {/* 🎯 CATEGORY NOW DISPLAYED */}
+              <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
             </div>
           ))
         )}
@@ -133,7 +139,7 @@ function App() {
                 <input key={i} type="text" placeholder={`Media URL ${i + 1}`} value={newPost.mediaUrls[i] || ''} onChange={(e) => handleMediaChange(e, i)} />
               ))}
 
-              {/* Category Dropdown */}
+              {/* Dropdown for category */}
               <select
                 name="category"
                 value={newPost.category}
@@ -169,7 +175,7 @@ function App() {
                 <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
                 <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
 
-                {/* Category Dropdown for Editing */}
+                {/* Dropdown for editing category */}
                 <select
                   name="category"
                   value={selectedPost.category}
