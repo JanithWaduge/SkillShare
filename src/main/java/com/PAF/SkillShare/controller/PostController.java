@@ -50,4 +50,10 @@ public class PostController {
         return postService.addComment(id, comment);
     }
 
+    @PutMapping("/{id}/comment/{index}/delete")
+    public Post deleteComment(@PathVariable String id, @PathVariable int index) {
+        return postService.deleteComment(id, index);
+    }
+
+
 }

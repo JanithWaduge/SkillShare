@@ -62,4 +62,15 @@ public class PostService {
         }).orElse(null);
     }
 
+    public Post deleteComment(String postId, int commentIndex) {
+        return postRepository.findById(postId).map(post -> {
+            if (post.getComments() != null && commentIndex >= 0 && commentIndex < post.getComments().size()) {
+                post.getComments().remove(commentIndex);
+                return postRepository.save(post);
+            }
+            return post;
+        }).orElse(null);
+    }
+
+
 }

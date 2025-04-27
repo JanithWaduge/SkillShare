@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -58,8 +60,10 @@ function App() {
         createdAt: '',
       });
       fetchPosts();
+      toast.success('✅ Post Created Successfully!');
     } catch (error) {
       console.error('Error creating post:', error);
+      toast.error('❌ Failed to create post');
     }
   };
 
@@ -78,8 +82,10 @@ function App() {
       await axios.delete(`http://localhost:8081/api/posts/${id}`);
       closeEdit();
       fetchPosts();
+      toast.success('🗑️ Post Deleted Successfully!');
     } catch (error) {
       console.error('Error deleting post:', error);
+      toast.error('❌ Failed to delete post');
     }
   };
 
@@ -88,8 +94,10 @@ function App() {
       await axios.put(`http://localhost:8081/api/posts/${selectedPost.id}`, selectedPost);
       closeEdit();
       fetchPosts();
+      toast.success('✅ Post Updated Successfully!');
     } catch (error) {
       console.error('Error updating post:', error);
+      toast.error('❌ Failed to update post');
     }
   };
 
@@ -102,8 +110,10 @@ function App() {
     try {
       await axios.put(`http://localhost:8081/api/posts/${id}/like`);
       fetchPosts();
+      toast.success('❤️ Liked!');
     } catch (error) {
       console.error('Error liking post:', error);
+      toast.error('❌ Failed to like');
     }
   };
 
@@ -115,13 +125,27 @@ function App() {
         }
       });
       fetchPosts();
+      toast.success('💬 Comment Added!');
     } catch (error) {
       console.error('Error adding comment:', error);
+      toast.error('❌ Failed to add comment');
+    }
+  };
+
+  const deleteComment = async (postId, commentIndex) => {
+    try {
+      await axios.put(`http://localhost:8081/api/posts/${postId}/comment/${commentIndex}/delete`);
+      fetchPosts();
+      toast.success('🗑️ Comment Deleted!');
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast.error('❌ Failed to delete comment');
     }
   };
 
   return (
     <div className="app-container">
+      <ToastContainer position="top-center" autoClose={1500} />
       <div className="content-wrapper">
         <h1 className="app-title">Talento</h1>
 
@@ -146,7 +170,7 @@ function App() {
               <p className="post-description">{post.description}</p>
               <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
 
-              {/* ❤️ Like button with animation */}
+              {/* ❤️ Like button */}
               <button
                 className={`like-button ${post.likes > 0 ? 'liked' : ''}`}
                 onClick={() => likePost(post.id)}
@@ -158,7 +182,15 @@ function App() {
               <div className="comments-section">
                 <h4>Comments</h4>
                 {post.comments && post.comments.map((comment, index) => (
-                  <p key={index} className="comment">{comment}</p>
+                  <p key={index} className="comment">
+                    {comment}
+                    <span
+                      className="delete-comment-icon"
+                      onClick={() => deleteComment(post.id, index)}
+                    >
+                      🗑️
+                    </span>
+                  </p>
                 ))}
 
                 {/* Add Comment Form */}
@@ -171,6 +203,7 @@ function App() {
 
       <button className="floating-button" onClick={() => setShowForm(true)}>+</button>
 
+      {/* Create Post Modal */}
       {showForm && (
         <div className="modal-overlay">
           <div className="modal">
@@ -181,13 +214,7 @@ function App() {
               {[0, 1, 2].map((i) => (
                 <input key={i} type="text" placeholder={`Media URL ${i + 1}`} value={newPost.mediaUrls[i] || ''} onChange={(e) => handleMediaChange(e, i)} />
               ))}
-
-              <select
-                name="category"
-                value={newPost.category}
-                onChange={handleInputChange}
-                required
-              >
+              <select name="category" value={newPost.category} onChange={handleInputChange} required>
                 <option value="" disabled>Select Category</option>
                 <option value="Technology">Technology</option>
                 <option value="Education">Education</option>
@@ -196,7 +223,6 @@ function App() {
                 <option value="Business">Business</option>
                 <option value="Travel">Travel</option>
               </select>
-
               <input type="text" name="postedBy" placeholder="Posted By" value={newPost.postedBy} onChange={handleInputChange} required />
               <input type="text" name="createdAt" placeholder="Created At (e.g., 2025-04-26)" value={newPost.createdAt} onChange={handleInputChange} required />
 
@@ -209,35 +235,32 @@ function App() {
         </div>
       )}
 
+      {/* Edit Post Modal */}
       {editMode && selectedPost && (
         <div className="modal-overlay">
           <div className="modal">
             <h2 className="modal-title">Edit Post</h2>
-            <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
-            <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
+            <form className="form" onSubmit={(e) => { e.preventDefault(); saveEditedPost(); }}>
+              <input type="text" name="title" placeholder="Title" value={selectedPost.title} onChange={handleSelectedPostChange} required />
+              <textarea name="description" placeholder="Description" value={selectedPost.description} onChange={handleSelectedPostChange} required />
+              <select name="category" value={selectedPost.category} onChange={handleSelectedPostChange} required>
+                <option value="" disabled>Select Category</option>
+                <option value="Technology">Technology</option>
+                <option value="Education">Education</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Business">Business</option>
+                <option value="Travel">Travel</option>
+              </select>
+              <input type="text" name="postedBy" placeholder="Posted By" value={selectedPost.postedBy} onChange={handleSelectedPostChange} required />
+              <input type="text" name="createdAt" placeholder="Created At" value={selectedPost.createdAt} onChange={handleSelectedPostChange} required />
 
-            <select
-              name="category"
-              value={selectedPost.category}
-              onChange={handleSelectedPostChange}
-            >
-              <option value="" disabled>Select Category</option>
-              <option value="Technology">Technology</option>
-              <option value="Education">Education</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Health">Health</option>
-              <option value="Business">Business</option>
-              <option value="Travel">Travel</option>
-            </select>
-
-            <input type="text" name="postedBy" value={selectedPost.postedBy} onChange={handleSelectedPostChange} />
-            <input type="text" name="createdAt" value={selectedPost.createdAt} onChange={handleSelectedPostChange} />
-
-            <div className="form-buttons">
-              <button onClick={saveEditedPost} className="btn-primary">Save</button>
-              <button onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
-              <button onClick={closeEdit} className="btn-secondary">Cancel</button>
-            </div>
+              <div className="form-buttons">
+                <button type="submit" className="btn-primary">Save</button>
+                <button type="button" onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
+                <button type="button" onClick={closeEdit} className="btn-secondary">Cancel</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
