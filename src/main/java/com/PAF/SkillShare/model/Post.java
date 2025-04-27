@@ -8,7 +8,6 @@ import java.util.List;
 public class Post {
     @Id
     private String id;
-
     private String title;
     private String description;
     private List<String> mediaUrls; // store up to 3 URLs or video links
