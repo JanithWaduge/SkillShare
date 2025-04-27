@@ -17,15 +17,6 @@ function App() {
     createdAt: '',
   });
 
-  const categories = [
-    'Technology',
-    'Business',
-    'Education',
-    'Entertainment',
-    'Health',
-    'Travel'
-  ];
-
   const fetchPosts = async () => {
     try {
       const response = await axios.get('http://localhost:8081/api/posts');
@@ -141,12 +132,23 @@ function App() {
               {[0, 1, 2].map((i) => (
                 <input key={i} type="text" placeholder={`Media URL ${i + 1}`} value={newPost.mediaUrls[i] || ''} onChange={(e) => handleMediaChange(e, i)} />
               ))}
-              <select name="category" value={newPost.category} onChange={handleInputChange} required>
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
+
+              {/* Category Dropdown */}
+              <select
+                name="category"
+                value={newPost.category}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>Select Category</option>
+                <option value="Technology">Technology</option>
+                <option value="Education">Education</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Business">Business</option>
+                <option value="Travel">Travel</option>
               </select>
+
               <input type="text" name="postedBy" placeholder="Posted By" value={newPost.postedBy} onChange={handleInputChange} required />
               <input type="text" name="createdAt" placeholder="Created At (e.g., 2025-04-26)" value={newPost.createdAt} onChange={handleInputChange} required />
 
@@ -166,12 +168,22 @@ function App() {
               <>
                 <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
                 <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
-                <select name="category" value={selectedPost.category} onChange={handleSelectedPostChange}>
-                  <option value="">Select Category</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
+
+                {/* Category Dropdown for Editing */}
+                <select
+                  name="category"
+                  value={selectedPost.category}
+                  onChange={handleSelectedPostChange}
+                >
+                  <option value="" disabled>Select Category</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Education">Education</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Health">Health</option>
+                  <option value="Business">Business</option>
+                  <option value="Travel">Travel</option>
                 </select>
+
                 <input type="text" name="postedBy" value={selectedPost.postedBy} onChange={handleSelectedPostChange} />
                 <input type="text" name="createdAt" value={selectedPost.createdAt} onChange={handleSelectedPostChange} />
 
