@@ -5,8 +5,11 @@ import com.PAF.SkillShare.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+
 
 @Service
 public class PostService {
@@ -41,4 +44,22 @@ public class PostService {
     public void deletePost(String id) {
         postRepository.deleteById(id);
     }
+
+    public Post likePost(String id) {
+        return postRepository.findById(id).map(post -> {
+            post.setLikes(post.getLikes() + 1);
+            return postRepository.save(post);
+        }).orElse(null);
+    }
+
+    public Post addComment(String id, String comment) {
+        return postRepository.findById(id).map(post -> {
+            if (post.getComments() == null) {
+                post.setComments(new ArrayList<>());
+            }
+            post.getComments().add(comment);
+            return postRepository.save(post);
+        }).orElse(null);
+    }
+
 }

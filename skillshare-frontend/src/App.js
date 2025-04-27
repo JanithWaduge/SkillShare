@@ -46,7 +46,7 @@ function App() {
     try {
       await axios.post('http://localhost:8081/api/posts', {
         ...newPost,
-        mediaUrls: newPost.mediaUrls.filter(url => url && url.trim() !== ''), // Clean mediaUrls
+        mediaUrls: newPost.mediaUrls.filter(url => url && url.trim() !== ''),
       });
       setShowForm(false);
       setNewPost({
@@ -97,6 +97,28 @@ function App() {
     setSelectedPost((prev) => ({ ...prev, [name]: value }));
   };
 
+  const likePost = async (id) => {
+    try {
+      await axios.put(`http://localhost:8081/api/posts/${id}/like`);
+      fetchPosts();
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
+
+  const addComment = async (id, comment) => {
+    try {
+      await axios.put(`http://localhost:8081/api/posts/${id}/comment`, comment, {
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      });
+      fetchPosts();
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
+
   return (
     <div className="app-container">
       <div className="content-wrapper">
@@ -118,9 +140,23 @@ function App() {
               </div>
               <h2 className="post-title">{post.title}</h2>
               <p className="post-description">{post.description}</p>
-
-              {/* 🎯 CATEGORY NOW DISPLAYED */}
               <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
+
+              {/* ❤️ Like button */}
+              <button className="like-button" onClick={() => likePost(post.id)}>
+                ❤️ {post.likes || 0} Likes
+              </button>
+
+              {/* 💬 Comments Section */}
+              <div className="comments-section">
+                <h4>Comments</h4>
+                {post.comments && post.comments.map((comment, index) => (
+                  <p key={index} className="comment">{comment}</p>
+                ))}
+
+                {/* Add Comment Form */}
+                <AddCommentForm postId={post.id} addComment={addComment} />
+              </div>
             </div>
           ))
         )}
@@ -139,7 +175,6 @@ function App() {
                 <input key={i} type="text" placeholder={`Media URL ${i + 1}`} value={newPost.mediaUrls[i] || ''} onChange={(e) => handleMediaChange(e, i)} />
               ))}
 
-              {/* Dropdown for category */}
               <select
                 name="category"
                 value={newPost.category}
@@ -175,7 +210,6 @@ function App() {
                 <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
                 <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
 
-                {/* Dropdown for editing category */}
                 <select
                   name="category"
                   value={selectedPost.category}
@@ -217,6 +251,29 @@ function App() {
         </div>
       )}
     </div>
+  );
+}
+
+function AddCommentForm({ postId, addComment }) {
+  const [comment, setComment] = useState('');
+
+  const submitComment = async (e) => {
+    e.preventDefault();
+    if (comment.trim() === '') return;
+    await addComment(postId, comment);
+    setComment('');
+  };
+
+  return (
+    <form onSubmit={submitComment} className="add-comment-form">
+      <input
+        type="text"
+        placeholder="Write a comment..."
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+      />
+      <button type="submit" className="btn-primary">Post</button>
+    </form>
   );
 }
 
