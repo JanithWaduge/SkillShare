@@ -1,4 +1,5 @@
 package com.PAF.SkillShare.service;
+
 import com.PAF.SkillShare.model.Post;
 import com.PAF.SkillShare.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class PostService {
             post.setTitle(updatedPost.getTitle());
             post.setDescription(updatedPost.getDescription());
             post.setMediaUrls(updatedPost.getMediaUrls());
-            post.setCategory(updatedPost.getCategory());
+            post.setCategory(updatedPost.getCategory()); // ✅ Don't forget to update category
             post.setPostedBy(updatedPost.getPostedBy());
             post.setCreatedAt(updatedPost.getCreatedAt());
             return postRepository.save(post);
@@ -41,4 +42,3 @@ public class PostService {
         postRepository.deleteById(id);
     }
 }
-

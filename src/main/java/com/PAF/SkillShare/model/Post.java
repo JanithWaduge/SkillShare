@@ -6,14 +6,15 @@ import java.util.List;
 
 @Document(collection = "posts")
 public class Post {
+
     @Id
     private String id;
     private String title;
     private String description;
-    private List<String> mediaUrls; // store up to 3 URLs or video links
-    private String category; // e.g., coding, cooking
-    private String postedBy; // user id or name
-    private String createdAt;
+    private List<String> mediaUrls; // store up to 3 URLs
+    private String category; // Technology, Business, etc.
+    private String postedBy; // username or id
+    private String createdAt; // date
 
     // Getters and Setters
     public String getId() { return id; }
@@ -37,4 +38,3 @@ public class Post {
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }
-

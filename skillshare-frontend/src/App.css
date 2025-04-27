@@ -188,3 +188,11 @@ body {
   color: #666;
   margin-bottom: 8px;
 }
+select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+}
