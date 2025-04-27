@@ -146,8 +146,11 @@ function App() {
               <p className="post-description">{post.description}</p>
               <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
 
-              {/* ❤️ Like button */}
-              <button className="like-button" onClick={() => likePost(post.id)}>
+              {/* ❤️ Like button with animation */}
+              <button
+                className={`like-button ${post.likes > 0 ? 'liked' : ''}`}
+                onClick={() => likePost(post.id)}
+              >
                 ❤️ {post.likes || 0} Likes
               </button>
 
