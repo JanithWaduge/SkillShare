@@ -63,19 +63,20 @@ function App() {
     }
   };
 
-  const openPost = (post) => {
+  const openEditPost = (post) => {
     setSelectedPost(post);
-    setEditMode(false);
+    setEditMode(true);
   };
 
-  const closePost = () => {
+  const closeEdit = () => {
     setSelectedPost(null);
+    setEditMode(false);
   };
 
   const deletePost = async (id) => {
     try {
       await axios.delete(`http://localhost:8081/api/posts/${id}`);
-      closePost();
+      closeEdit();
       fetchPosts();
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -85,7 +86,7 @@ function App() {
   const saveEditedPost = async () => {
     try {
       await axios.put(`http://localhost:8081/api/posts/${selectedPost.id}`, selectedPost);
-      setEditMode(false);
+      closeEdit();
       fetchPosts();
     } catch (error) {
       console.error('Error updating post:', error);
@@ -128,7 +129,7 @@ function App() {
           <p className="no-posts">No posts available yet.</p>
         ) : (
           posts.map((post) => (
-            <div key={post.id} onClick={() => openPost(post)} className="post-card">
+            <div key={post.id} className="post-card">
               <div className="post-header">
                 <div className="avatar">
                   {post.postedBy?.charAt(0)}
@@ -136,6 +137,9 @@ function App() {
                 <div>
                   <p className="posted-by">{post.postedBy}</p>
                   <p className="post-date">{post.createdAt}</p>
+                </div>
+                <div className="edit-icon" onClick={() => openEditPost(post)}>
+                  ✏️
                 </div>
               </div>
               <h2 className="post-title">{post.title}</h2>
@@ -202,51 +206,35 @@ function App() {
         </div>
       )}
 
-      {selectedPost && (
+      {editMode && selectedPost && (
         <div className="modal-overlay">
           <div className="modal">
-            {editMode ? (
-              <>
-                <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
-                <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
+            <h2 className="modal-title">Edit Post</h2>
+            <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
+            <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
 
-                <select
-                  name="category"
-                  value={selectedPost.category}
-                  onChange={handleSelectedPostChange}
-                >
-                  <option value="" disabled>Select Category</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Education">Education</option>
-                  <option value="Entertainment">Entertainment</option>
-                  <option value="Health">Health</option>
-                  <option value="Business">Business</option>
-                  <option value="Travel">Travel</option>
-                </select>
+            <select
+              name="category"
+              value={selectedPost.category}
+              onChange={handleSelectedPostChange}
+            >
+              <option value="" disabled>Select Category</option>
+              <option value="Technology">Technology</option>
+              <option value="Education">Education</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Health">Health</option>
+              <option value="Business">Business</option>
+              <option value="Travel">Travel</option>
+            </select>
 
-                <input type="text" name="postedBy" value={selectedPost.postedBy} onChange={handleSelectedPostChange} />
-                <input type="text" name="createdAt" value={selectedPost.createdAt} onChange={handleSelectedPostChange} />
+            <input type="text" name="postedBy" value={selectedPost.postedBy} onChange={handleSelectedPostChange} />
+            <input type="text" name="createdAt" value={selectedPost.createdAt} onChange={handleSelectedPostChange} />
 
-                <div className="form-buttons">
-                  <button onClick={saveEditedPost} className="btn-primary">Save</button>
-                  <button onClick={() => setEditMode(false)} className="btn-secondary">Cancel</button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 className="modal-title">{selectedPost.title}</h2>
-                <p className="post-description">{selectedPost.description}</p>
-                <p className="post-details">Category: {selectedPost.category}</p>
-                <p className="post-details">Posted By: {selectedPost.postedBy}</p>
-                <p className="post-details">Created At: {selectedPost.createdAt}</p>
-
-                <div className="form-buttons">
-                  <button onClick={() => setEditMode(true)} className="btn-primary">Edit</button>
-                  <button onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
-                  <button onClick={closePost} className="btn-secondary">Close</button>
-                </div>
-              </>
-            )}
+            <div className="form-buttons">
+              <button onClick={saveEditedPost} className="btn-primary">Save</button>
+              <button onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
+              <button onClick={closeEdit} className="btn-secondary">Cancel</button>
+            </div>
           </div>
         </div>
       )}

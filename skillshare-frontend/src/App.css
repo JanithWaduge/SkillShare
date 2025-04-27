@@ -75,8 +75,9 @@ select:hover {
 .post-header {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  justify-content: space-between;
 }
+
 
 .avatar {
   width: 50px;
@@ -259,4 +260,15 @@ select:hover {
 
 .add-comment-form button {
   margin-left: 6px;
+}
+.edit-icon {
+  margin-left: auto;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+}
+
+.edit-icon:hover {
+  color: #007bff;
 }
