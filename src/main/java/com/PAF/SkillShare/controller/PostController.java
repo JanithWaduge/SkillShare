@@ -39,5 +39,21 @@ public class PostController {
     public void deletePost(@PathVariable String id) {
         postService.deletePost(id);
     }
-}
 
+    @PutMapping("/{id}/like")
+    public Post likePost(@PathVariable String id) {
+        return postService.likePost(id);
+    }
+
+    @PutMapping("/{id}/comment")
+    public Post addComment(@PathVariable String id, @RequestBody String comment) {
+        return postService.addComment(id, comment);
+    }
+
+    @PutMapping("/{id}/comment/{index}/delete")
+    public Post deleteComment(@PathVariable String id, @PathVariable int index) {
+        return postService.deleteComment(id, index);
+    }
+
+
+}

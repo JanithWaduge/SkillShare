@@ -6,15 +6,18 @@ import java.util.List;
 
 @Document(collection = "posts")
 public class Post {
+
     @Id
     private String id;
-
     private String title;
     private String description;
-    private List<String> mediaUrls; // store up to 3 URLs or video links
-    private String category; // e.g., coding, cooking
-    private String postedBy; // user id or name
-    private String createdAt;
+    private List<String> mediaUrls; // store up to 3 URLs
+    private String category; // Technology, Business, etc.
+    private String postedBy; // username or id
+    private String createdAt; // date
+    private int likes = 0; // number of likes
+    private List<String> comments; // list of comments
+
 
     // Getters and Setters
     public String getId() { return id; }
@@ -37,5 +40,21 @@ public class Post {
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
-}
 
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+    }
+
+}
