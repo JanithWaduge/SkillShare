@@ -43,29 +43,35 @@ function App() {
     setNewPost((prev) => ({ ...prev, mediaUrls: updatedUrls }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:8081/api/posts', {
-        ...newPost,
-        mediaUrls: newPost.mediaUrls.filter(url => url && url.trim() !== ''),
-      });
-      setShowForm(false);
-      setNewPost({
-        title: '',
-        description: '',
-        mediaUrls: [],
-        category: '',
-        postedBy: '',
-        createdAt: '',
-      });
-      fetchPosts();
-      toast.success('✅ Post Created Successfully!');
-    } catch (error) {
-      console.error('Error creating post:', error);
-      toast.error('❌ Failed to create post');
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    // POST request eka change karanna /upload endpoint ekata
+    await axios.post('http://localhost:8081/api/posts/upload', {  // Correct endpoint
+      title: newPost.title,
+      description: newPost.description,
+      category: newPost.category,
+      postedBy: newPost.postedBy,
+      createdAt: newPost.createdAt,
+      mediaFiles: newPost.mediaUrls, // Sending the mediaUrls array to backend
+    });
+    setShowForm(false);
+    setNewPost({
+      title: '',
+      description: '',
+      mediaUrls: [],
+      category: '',
+      postedBy: '',
+      createdAt: '',
+    });
+    fetchPosts();
+    toast.success('✅ Post Created Successfully!');
+  } catch (error) {
+    console.error('Error creating post:', error);
+    toast.error('❌ Failed to create post');
+  }
+};
+
 
   const openEditPost = (post) => {
     setSelectedPost(post);
@@ -134,7 +140,7 @@ function App() {
 
   const deleteComment = async (postId, commentIndex) => {
     try {
-      await axios.put(`http://localhost:8081/api/posts/${postId}/comment/${commentIndex}/delete`);
+      await axios.delete(`http://localhost:8081/api/posts/${postId}/comment/${commentIndex}/delete`);
       fetchPosts();
       toast.success('🗑️ Comment Deleted!');
     } catch (error) {
@@ -192,7 +198,6 @@ function App() {
                     </span>
                   </p>
                 ))}
-
                 {/* Add Comment Form */}
                 <AddCommentForm postId={post.id} addComment={addComment} />
               </div>
@@ -225,7 +230,6 @@ function App() {
               </select>
               <input type="text" name="postedBy" placeholder="Posted By" value={newPost.postedBy} onChange={handleInputChange} required />
               <input type="text" name="createdAt" placeholder="Created At (e.g., 2025-04-26)" value={newPost.createdAt} onChange={handleInputChange} required />
-
               <div className="form-buttons">
                 <button type="submit" className="btn-primary">Submit</button>
                 <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
@@ -254,7 +258,6 @@ function App() {
               </select>
               <input type="text" name="postedBy" placeholder="Posted By" value={selectedPost.postedBy} onChange={handleSelectedPostChange} required />
               <input type="text" name="createdAt" placeholder="Created At" value={selectedPost.createdAt} onChange={handleSelectedPostChange} required />
-
               <div className="form-buttons">
                 <button type="submit" className="btn-primary">Save</button>
                 <button type="button" onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
