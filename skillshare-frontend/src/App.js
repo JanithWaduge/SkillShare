@@ -190,6 +190,11 @@ function App() {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(); // This will format the date as MM/DD/YYYY
+  };
+
   return (
     <div className="app-container">
       <ToastContainer position="top-center" autoClose={1500} />
@@ -205,7 +210,7 @@ function App() {
                 <div className="avatar">{post.postedBy?.charAt(0)}</div>
                 <div>
                   <p className="posted-by">{post.postedBy}</p>
-                  <p className="post-date">{post.createdAt}</p>
+                  <p className="post-date">{post.createdAt ? formatDate(post.createdAt) : 'Invalid Date'}</p>
                 </div>
                 <div className="edit-icon" onClick={() => openEditPost(post)}>
                   ✏️
@@ -309,9 +314,9 @@ function App() {
                 required
               />
               <input
-                type="text"
+                type="date"
                 name="createdAt"
-                placeholder="Created At (e.g., 2025-04-26)"
+                placeholder="Created At"
                 value={newPost.createdAt}
                 onChange={handleInputChange}
                 required
@@ -381,7 +386,7 @@ function App() {
                 required
               />
               <input
-                type="text"
+                type="date"
                 name="createdAt"
                 placeholder="Created At"
                 value={selectedPost.createdAt}
