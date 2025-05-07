@@ -309,7 +309,7 @@ function App() {
                 required
               />
               <input
-                type="date"
+                type="text"
                 name="createdAt"
                 placeholder="Created At (e.g., 2025-04-26)"
                 value={newPost.createdAt}
@@ -381,7 +381,7 @@ function App() {
                 required
               />
               <input
-                type="date"
+                type="text"
                 name="createdAt"
                 placeholder="Created At"
                 value={selectedPost.createdAt}
