@@ -78,3 +78,18 @@
   90% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-10px); }
 }
+
+.system-title {
+  color: #0a66c2;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 4px;
+}

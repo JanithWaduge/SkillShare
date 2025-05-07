@@ -12,6 +12,7 @@ function UserManagement() {
   const [users, setUsers] = useState([]);
   const [formMode, setFormMode] = useState('create');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -32,21 +33,52 @@ function UserManagement() {
       const res = await axios.get(API_URL);
       setUsers(res.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
       toast.error('❌ Failed to fetch users');
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.email.includes('@') || !formData.email.includes('.com')) {
+      newErrors.email = 'Invalid email format. Must include @ and .com';
+    }
+
+    if (formData.password.length < 12) {
+      newErrors.password = 'Password must be at least 12 characters long.';
+    }
+
+    try {
+      new URL(formData.profileImageUrl);
+    } catch (_) {
+      newErrors.profileImageUrl = 'Invalid URL.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    const updatedForm = { ...formData, [name]: value };
+
+    if (name === 'profileImageUrl' && value) {
+      try {
+        new URL(value);
+        updatedForm.createdAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      } catch (_) {
+        updatedForm.createdAt = '';
+      }
+    }
+
+    setFormData(updatedForm);
+    setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     const payload = {
       ...formData,
       skills: formData.skills.split(',').map(skill => skill.trim())
@@ -57,7 +89,7 @@ function UserManagement() {
         await axios.post(API_URL, payload);
         toast.success('✅ User successfully created!');
         setTimeout(() => {
-          navigate('/posts'); // Redirect to posts
+          navigate('/posts');
         }, 1500);
       } else {
         await axios.put(`${API_URL}/${selectedUser.id}`, payload);
@@ -77,7 +109,6 @@ function UserManagement() {
       setFormMode('create');
       setSelectedUser(null);
     } catch (error) {
-      console.error('Error submitting form:', error);
       toast.error('❌ Failed to create or update user');
     }
   };
@@ -102,7 +133,6 @@ function UserManagement() {
       fetchUsers();
       toast.success('🗑️ User deleted successfully!');
     } catch (error) {
-      console.error('Error deleting user:', error);
       toast.error('❌ Failed to delete user');
     }
   };
@@ -120,55 +150,68 @@ function UserManagement() {
           placeholder="Name"
           required
         />
-        <input
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          required
-        />
-        <input
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          type="password"
-          required
-        />
+
+        <div>
+          <input
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+          />
+          {errors.email && <small className="error">{errors.email}</small>}
+        </div>
+
+        <div>
+          <input
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            type="password"
+            required
+          />
+          {errors.password && <small className="error">{errors.password}</small>}
+        </div>
+
         <textarea
           name="bio"
           value={formData.bio}
           onChange={handleChange}
           placeholder="Bio"
         />
+
         <input
           name="skills"
           value={formData.skills}
           onChange={handleChange}
           placeholder="Skills (comma separated)"
         />
-        <input
-          name="profileImageUrl"
-          value={formData.profileImageUrl}
-          onChange={handleChange}
-          placeholder="Profile Image URL"
-        />
+
+        <div>
+          <input
+            name="profileImageUrl"
+            value={formData.profileImageUrl}
+            onChange={handleChange}
+            placeholder="Profile Image URL"
+          />
+          {errors.profileImageUrl && <small className="error">{errors.profileImageUrl}</small>}
+        </div>
+
         <input
           name="createdAt"
           value={formData.createdAt}
-          onChange={handleChange}
-          placeholder="Created At (e.g., 2025-04-27)"
+          placeholder="Created At"
+          readOnly
         />
+
         <button type="submit">{formMode === 'create' ? 'Create' : 'Update'} User</button>
       </form>
 
       <div className="user-list">
         {users.map((user) => (
           <div className="user-card" key={user.id}>
-            <img
-              src={user.profileImageUrl || 'https://via.placeholder.com/100'}
-              alt="Profile"
-            />
+            <img src={user.profileImageUrl || 'https://via.placeholder.com/100'} alt="Profile" />
             <h3>{user.name}</h3>
             <p><strong>Email:</strong> {user.email}</p>
             <p><strong>Bio:</strong> {user.bio}</p>
