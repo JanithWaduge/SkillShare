@@ -1,4 +1,5 @@
 package com.PAF.SkillShare.service;
+
 import com.PAF.SkillShare.model.Post;
 import com.PAF.SkillShare.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,32 +14,63 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
+    // Get all posts
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
 
+    // Get a post by ID
     public Optional<Post> getPostById(String id) {
         return postRepository.findById(id);
     }
 
+    // Create a new post
     public Post createPost(Post post) {
         return postRepository.save(post);
     }
 
-    public Post updatePost(String id, Post updatedPost) {
-        return postRepository.findById(id).map(post -> {
-            post.setTitle(updatedPost.getTitle());
-            post.setDescription(updatedPost.getDescription());
-            post.setMediaUrls(updatedPost.getMediaUrls());
-            post.setCategory(updatedPost.getCategory());
-            post.setPostedBy(updatedPost.getPostedBy());
-            post.setCreatedAt(updatedPost.getCreatedAt());
+    // Like a post
+    public Post likePost(String id) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.setLikes(post.getLikes() + 1); // Increment likes
             return postRepository.save(post);
-        }).orElse(null);
+        }
+        return null;
     }
 
-    public void deletePost(String id) {
-        postRepository.deleteById(id);
+    // Delete a post
+    public boolean deletePost(String id) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isPresent()) {
+            postRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    // Add comment to a post
+    public Post addComment(String id, String comment) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.getComments().add(comment);  // Add comment
+            return postRepository.save(post);
+        }
+        return null;
+    }
+
+    // Delete comment from a post
+    public Post deleteComment(String postId, int commentIndex) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            if (commentIndex >= 0 && commentIndex < post.getComments().size()) {
+                post.getComments().remove(commentIndex);  // Remove comment by index
+                return postRepository.save(post);
+            }
+        }
+        return null;
     }
 }
-
