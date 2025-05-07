@@ -120,7 +120,25 @@ function App() {
 
   const saveEditedPost = async () => {
     try {
-      await axios.put(`http://localhost:8081/api/posts/${selectedPost.id}`, selectedPost);
+      const formData = new FormData();
+      formData.append('title', selectedPost.title);
+      formData.append('description', selectedPost.description);
+      formData.append('category', selectedPost.category);
+      formData.append('postedBy', selectedPost.postedBy);
+      formData.append('createdAt', selectedPost.createdAt);
+
+      // Append the selected media files to FormData
+      const mediaFiles = document.getElementById('mediaFiles').files;
+      for (let i = 0; i < mediaFiles.length; i++) {
+        formData.append('mediaFiles', mediaFiles[i]);
+      }
+
+      await axios.put(`http://localhost:8081/api/posts/${selectedPost.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       closeEdit();
       fetchPosts();
       toast.success('✅ Post Updated Successfully!');
