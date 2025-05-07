@@ -355,3 +355,11 @@ select:hover {
 .delete-comment-icon:hover {
   color: #c82333;
 }
+.post-image {
+  width: 100%; /* Make the image responsive */
+  max-width: 800px; /* Set a maximum width for the image */
+  height: auto; /* Ensure the aspect ratio is maintained */
+  border-radius: 8px; /* Add rounded corners if desired */
+  object-fit: cover; /* Make sure the image fills the space without stretching */
+  margin-top: 10px;
+}

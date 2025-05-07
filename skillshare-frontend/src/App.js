@@ -189,6 +189,11 @@ function App() {
               <p className="post-description">{post.description}</p>
               <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
 
+              {/* Render Media (Image) */}
+              {post.mediaUrls && post.mediaUrls.map((url, index) => (
+                <img key={index} src={`http://localhost:8081${url}`} alt={`Post Media ${index + 1}`} className="post-image" />
+              ))}
+
               <button
                 className={`like-button ${post.likes > 0 ? 'liked' : ''}`}
                 onClick={() => likePost(post.id)}
@@ -269,7 +274,7 @@ function App() {
                 <option value="Business">Business</option>
                 <option value="Travel">Travel</option>
               </select>
-           <input
+              <input
                 type="text"
                 name="postedBy"
                 placeholder="Posted By"
