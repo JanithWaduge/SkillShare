@@ -9,6 +9,7 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null); // For image preview in edit mode
 
   const [newPost, setNewPost] = useState({
     title: '',
@@ -47,6 +48,11 @@ function App() {
     const files = e.target.files;
     const fileUrls = Array.from(files).map((file) => URL.createObjectURL(file));
     setNewPost((prev) => ({ ...prev, mediaUrls: fileUrls }));
+
+    // Preview the selected image
+    if (files && files[0]) {
+      setImagePreview(URL.createObjectURL(files[0])); // Show image preview in edit mode
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -91,11 +97,13 @@ function App() {
   const openEditPost = (post) => {
     setSelectedPost(post);
     setEditMode(true);
+    setImagePreview(post.mediaUrls ? post.mediaUrls[0] : null); // Set preview image if available
   };
 
   const closeEdit = () => {
     setSelectedPost(null);
     setEditMode(false);
+    setImagePreview(null); // Reset preview image
   };
 
   const deletePost = async (id) => {
@@ -324,6 +332,13 @@ function App() {
                 value={selectedPost.description}
                 onChange={handleSelectedPostChange}
                 required
+              />
+              {/* Render the current image */}
+              {imagePreview && <img src={imagePreview} alt="Image Preview" className="post-image" />}
+              <input
+                type="file"
+                id="mediaFiles"
+                onChange={handleFileChange}
               />
               <select
                 name="category"

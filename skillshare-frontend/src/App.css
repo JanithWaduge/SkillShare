@@ -13,6 +13,7 @@ body {
   max-width: 800px;
   margin: 0 auto;
 }
+
 /* Style for all select dropdowns */
 select {
   width: 100%;
@@ -43,7 +44,6 @@ select:focus {
 select:hover {
   border-color: #555;
 }
-
 
 .app-title {
   font-size: 36px;
@@ -77,7 +77,6 @@ select:hover {
   align-items: center;
   justify-content: space-between;
 }
-
 
 .avatar {
   width: 50px;
@@ -220,6 +219,7 @@ select:hover {
   color: #666;
   margin-bottom: 8px;
 }
+
 .post-category {
   display: inline-block;
   margin-top: 8px;
@@ -230,6 +230,7 @@ select:hover {
   border-radius: 20px;
   font-weight: 600;
 }
+
 .like-button {
   background-color: transparent;
   border: none;
@@ -272,6 +273,7 @@ select:hover {
 .add-comment-form button {
   margin-left: 6px;
 }
+
 .edit-icon {
   margin-left: auto;
   font-size: 18px;
@@ -283,22 +285,23 @@ select:hover {
 .edit-icon:hover {
   color: #007bff;
 }
+
 .modal form input,
 .modal form textarea,
 .modal form select {
   width: 100%;
   padding: 10px;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 14px;
   background-color: #f9f9f9;
 }
 
 .modal form textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 50px;
 }
 
 .modal .form-buttons {
@@ -344,6 +347,7 @@ select:hover {
 .btn-danger:hover {
   background-color: #c82333;
 }
+
 .delete-comment-icon {
   margin-left: 10px;
   cursor: pointer;
@@ -355,9 +359,10 @@ select:hover {
 .delete-comment-icon:hover {
   color: #c82333;
 }
+
 .post-image {
-  width: 100%; /* Make the image responsive */
-  max-width: 800px; /* Set a maximum width for the image */
+  width: 50%; /* Make the image responsive */
+  max-width: 400px; /* Set a maximum width for the image */
   height: auto; /* Ensure the aspect ratio is maintained */
   border-radius: 8px; /* Add rounded corners if desired */
   object-fit: cover; /* Make sure the image fills the space without stretching */
