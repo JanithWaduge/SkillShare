@@ -112,6 +112,7 @@ public class PostController {
         }
     }
 
+
     // Delete comment from a post
     @DeleteMapping("/{postId}/comment/{commentIndex}/delete")
     public ResponseEntity<Post> deleteComment(@PathVariable String postId, @PathVariable int commentIndex) {

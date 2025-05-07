@@ -5,6 +5,7 @@ import com.PAF.SkillShare.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,10 @@ public class PostService {
 
     // Create a new post
     public Post createPost(Post post) {
+        // Ensure comments are initialized to avoid null issues
+        if (post.getComments() == null) {
+            post.setComments(new ArrayList<>());
+        }
         return postRepository.save(post);
     }
 
@@ -55,10 +60,13 @@ public class PostService {
         Optional<Post> postOptional = postRepository.findById(id);
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
+            if (post.getComments() == null) {
+                post.setComments(new ArrayList<>());  // Initialize if null
+            }
             post.getComments().add(comment);  // Add comment
-            return postRepository.save(post);
+            return postRepository.save(post);  // Save post with new comment
         }
-        return null;
+        return null;  // Post not found
     }
 
     // Delete comment from a post
