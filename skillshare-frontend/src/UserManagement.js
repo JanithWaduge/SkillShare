@@ -44,8 +44,8 @@ function UserManagement() {
       newErrors.email = 'Invalid email format. Must include @ and .com';
     }
 
-    if (formData.password.length < 12) {
-      newErrors.password = 'Password must be at least 12 characters long.';
+    if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long.';
     }
 
     try {
@@ -62,10 +62,14 @@ function UserManagement() {
     const { name, value } = e.target;
     const updatedForm = { ...formData, [name]: value };
 
-    if (name === 'profileImageUrl' && value) {
+    if (name === 'profileImageUrl') {
       try {
         new URL(value);
-        updatedForm.createdAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
+        if (!formData.createdAt) {
+          const now = new Date();
+          const formatted = now.toISOString().slice(0, 16).replace('T', ' ');
+          updatedForm.createdAt = formatted;
+        }
       } catch (_) {
         updatedForm.createdAt = '';
       }
@@ -117,7 +121,7 @@ function UserManagement() {
     setFormData({
       name: user.name,
       email: user.email,
-      password: user.password,
+      password: user.password || '',
       bio: user.bio,
       skills: user.skills.join(', '),
       profileImageUrl: user.profileImageUrl,
@@ -140,7 +144,7 @@ function UserManagement() {
   return (
     <div className="user-mgmt-container">
       <h1 className="system-title">Talento</h1>
-      <h2>👤 Create User</h2>
+      <h2>👤 Create or Register User</h2>
 
       <form onSubmit={handleSubmit} className="user-form">
         <input
@@ -207,6 +211,13 @@ function UserManagement() {
 
         <button type="submit">{formMode === 'create' ? 'Create' : 'Update'} User</button>
       </form>
+
+      <div style={{ margin: '20px 0', textAlign: 'center' }}>
+        <h3>OR</h3>
+        <a href="http://localhost:8081/oauth2/authorization/google">
+          <button className="oauth-button">Sign in with Google</button>
+        </a>
+      </div>
 
       <div className="user-list">
         {users.map((user) => (
