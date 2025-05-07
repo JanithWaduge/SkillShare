@@ -140,7 +140,7 @@ function UserManagement() {
   return (
     <div className="user-mgmt-container">
       <h1 className="system-title">Talento</h1>
-      <h2>👤 User Management</h2>
+      <h2>👤 Create User</h2>
 
       <form onSubmit={handleSubmit} className="user-form">
         <input
