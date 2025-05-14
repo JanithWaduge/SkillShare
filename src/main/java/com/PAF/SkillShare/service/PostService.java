@@ -5,11 +5,9 @@ import com.PAF.SkillShare.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
-
 
 @Service
 public class PostService {
@@ -17,60 +15,70 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
+    // Get all posts
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
 
+    // Get a post by ID
     public Optional<Post> getPostById(String id) {
         return postRepository.findById(id);
     }
 
+    // Create a new post
     public Post createPost(Post post) {
+        // Ensure comments are initialized to avoid null issues
+        if (post.getComments() == null) {
+            post.setComments(new ArrayList<>());
+        }
         return postRepository.save(post);
     }
 
-    public Post updatePost(String id, Post updatedPost) {
-        return postRepository.findById(id).map(post -> {
-            post.setTitle(updatedPost.getTitle());
-            post.setDescription(updatedPost.getDescription());
-            post.setMediaUrls(updatedPost.getMediaUrls());
-            post.setCategory(updatedPost.getCategory()); // ✅ Don't forget to update category
-            post.setPostedBy(updatedPost.getPostedBy());
-            post.setCreatedAt(updatedPost.getCreatedAt());
-            return postRepository.save(post);
-        }).orElse(null);
-    }
-
-    public void deletePost(String id) {
-        postRepository.deleteById(id);
-    }
-
+    // Like a post
     public Post likePost(String id) {
-        return postRepository.findById(id).map(post -> {
-            post.setLikes(post.getLikes() + 1);
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.setLikes(post.getLikes() + 1); // Increment likes
             return postRepository.save(post);
-        }).orElse(null);
+        }
+        return null;
     }
 
+    // Delete a post
+    public boolean deletePost(String id) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isPresent()) {
+            postRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    // Add comment to a post
     public Post addComment(String id, String comment) {
-        return postRepository.findById(id).map(post -> {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
             if (post.getComments() == null) {
-                post.setComments(new ArrayList<>());
+                post.setComments(new ArrayList<>());  // Initialize if null
             }
-            post.getComments().add(comment);
-            return postRepository.save(post);
-        }).orElse(null);
+            post.getComments().add(comment);  // Add comment
+            return postRepository.save(post);  // Save post with new comment
+        }
+        return null;  // Post not found
     }
 
+    // Delete comment from a post
     public Post deleteComment(String postId, int commentIndex) {
-        return postRepository.findById(postId).map(post -> {
-            if (post.getComments() != null && commentIndex >= 0 && commentIndex < post.getComments().size()) {
-                post.getComments().remove(commentIndex);
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            if (commentIndex >= 0 && commentIndex < post.getComments().size()) {
+                post.getComments().remove(commentIndex);  // Remove comment by index
                 return postRepository.save(post);
             }
-            return post;
-        }).orElse(null);
+        }
+        return null;
     }
-
-
 }
