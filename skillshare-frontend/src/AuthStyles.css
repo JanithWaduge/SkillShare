@@ -1,0 +1,57 @@
+.auth-container, .auth-form-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 60px 20px;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.auth-title {
+  font-size: 2.2rem;
+  color: #0a66c2;
+  margin-bottom: 10px;
+}
+
+.auth-subtext {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.auth-buttons button,
+.auth-form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.sign-in-btn {
+  background-color: #fff;
+  border: 1px solid #0a66c2;
+  color: #0a66c2;
+}
+
+.sign-in-btn:hover {
+  background-color: #e6f0ff;
+}
+
+.sign-up-btn {
+  background-color: #0a66c2;
+  color: white;
+}
+
+.sign-up-btn:hover {
+  background-color: #004182;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 12px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
