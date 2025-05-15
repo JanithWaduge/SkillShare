@@ -284,6 +284,7 @@ function App() {
                   onChange={(e) => handleMediaChange(e, i)}
                 />
               ))}
+
               <input
                 type="file"
                 id="mediaFiles"
@@ -291,6 +292,9 @@ function App() {
                 onChange={handleFileChange}
                 required
               />
+
+              {/* Category Dropdown */}
+
               <select
                 name="category"
                 value={newPost.category}
@@ -305,6 +309,7 @@ function App() {
                 <option value="Business">Business</option>
                 <option value="Travel">Travel</option>
               </select>
+
               <input
                 type="text"
                 name="postedBy"
@@ -321,6 +326,12 @@ function App() {
                 onChange={handleInputChange}
                 required
               />
+
+
+              <input type="text" name="postedBy" placeholder="Posted By" value={newPost.postedBy} onChange={handleInputChange} required />
+              <input type="text" name="createdAt" placeholder="Created At (e.g., 2025-04-26)" value={newPost.createdAt} onChange={handleInputChange} required />
+
+
               <div className="form-buttons">
                 <button type="submit" className="btn-primary">Submit</button>
                 <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
@@ -333,6 +344,7 @@ function App() {
       {editMode && selectedPost && (
         <div className="modal-overlay">
           <div className="modal">
+
             <h2 className="modal-title">Edit Post</h2>
             <form
               className="form"
@@ -411,6 +423,51 @@ function App() {
                 </button>
               </div>
             </form>
+
+            {editMode ? (
+              <>
+                <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
+                <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
+
+                {/* Category Dropdown for Editing */}
+                <select
+                  name="category"
+                  value={selectedPost.category}
+                  onChange={handleSelectedPostChange}
+                >
+                  <option value="" disabled>Select Category</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Education">Education</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Health">Health</option>
+                  <option value="Business">Business</option>
+                  <option value="Travel">Travel</option>
+                </select>
+
+                <input type="text" name="postedBy" value={selectedPost.postedBy} onChange={handleSelectedPostChange} />
+                <input type="text" name="createdAt" value={selectedPost.createdAt} onChange={handleSelectedPostChange} />
+
+                <div className="form-buttons">
+                  <button onClick={saveEditedPost} className="btn-primary">Save</button>
+                  <button onClick={() => setEditMode(false)} className="btn-secondary">Cancel</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="modal-title">{selectedPost.title}</h2>
+                <p className="post-description">{selectedPost.description}</p>
+                <p className="post-details">Category: {selectedPost.category}</p>
+                <p className="post-details">Posted By: {selectedPost.postedBy}</p>
+                <p className="post-details">Created At: {selectedPost.createdAt}</p>
+
+                <div className="form-buttons">
+                  <button onClick={() => setEditMode(true)} className="btn-primary">Edit</button>
+                  <button onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
+                  <button onClick={closePost} className="btn-secondary">Close</button>
+                </div>
+              </>
+            )}
+
           </div>
         </div>
       )}
