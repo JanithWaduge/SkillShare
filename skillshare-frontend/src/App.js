@@ -463,7 +463,7 @@ function App() {
                 <div className="form-buttons">
                   <button onClick={() => setEditMode(true)} className="btn-primary">Edit</button>
                   <button onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
-                  <button onClick={closePost} className="btn-secondary">Close</button>
+                  <button onClick={deletePost} className="btn-secondary">Close</button>
                 </div>
               </>
             )}
