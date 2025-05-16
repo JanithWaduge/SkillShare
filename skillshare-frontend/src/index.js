@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SplashScreen from './SplashScreen';
 import App from './App';
 import Tutorials from './TutorialList';
+import LearnPage from './LearnPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -15,6 +16,7 @@ root.render(
         <Route path="/" element={<SplashScreen />} />
         <Route path="/posts" element={<App />} />
         <Route path="/tutorials" element={<Tutorials />} />
+        <Route path="/learn/:id" element={<LearnPage />} />
       </Routes>
     </Router>
   </React.StrictMode>
