@@ -9,39 +9,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tutorials")
-@CrossOrigin(origins = "*")
 public class TutorialController {
-///check error
+
     @Autowired
     private TutorialService tutorialService;
-
-    @GetMapping
-    public List<Tutorial> getAllTutorials() {
-        return tutorialService.getAllTutorials();
-    }
-
-    @GetMapping("/{id}")
-    public Tutorial getTutorialById(@PathVariable String id) {
-        return tutorialService.getTutorialById(id).orElse(null);
-    }
 
     @PostMapping
     public Tutorial createTutorial(@RequestBody Tutorial tutorial) {
         return tutorialService.createTutorial(tutorial);
     }
 
-    @PutMapping("/{id}")
-    public Tutorial updateTutorial(@PathVariable String id, @RequestBody Tutorial tutorial) {
-        return tutorialService.updateTutorial(id, tutorial);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteTutorial(@PathVariable String id) {
-        tutorialService.deleteTutorial(id);
-    }
-
-    @GetMapping("/category/{category}")
-    public List<Tutorial> getTutorialsByCategory(@PathVariable String category) {
-        return tutorialService.getTutorialsByCategory(category);
+    @GetMapping
+    public List<Tutorial> getAllTutorials() {
+        return tutorialService.getAllTutorials();
     }
 }
