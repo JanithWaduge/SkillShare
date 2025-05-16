@@ -28,4 +28,18 @@ public class TutorialService {
     public Tutorial getTutorialById(String id) {
         return tutorialRepository.findById(id).orElse(null);
     }
+
+    public Tutorial updateTutorial(String id, Tutorial updatedTutorial) {
+        return tutorialRepository.findById(id).map(existing -> {
+            existing.setTitle(updatedTutorial.getTitle());
+            existing.setDescription(updatedTutorial.getDescription());
+            existing.setCategory(updatedTutorial.getCategory());
+            existing.setEstimatedCompletionTime(updatedTutorial.getEstimatedCompletionTime());
+            existing.setSteps(updatedTutorial.getSteps());
+            existing.setResources(updatedTutorial.getResources());
+            existing.setCreatedBy(updatedTutorial.getCreatedBy());
+            existing.setCreatedAt(updatedTutorial.getCreatedAt());
+            return tutorialRepository.save(existing);
+        }).orElse(null);
+    }
 }

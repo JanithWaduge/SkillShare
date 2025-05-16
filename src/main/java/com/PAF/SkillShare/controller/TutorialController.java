@@ -36,4 +36,14 @@ public class TutorialController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Tutorial> updateTutorial(@PathVariable String id, @RequestBody Tutorial updatedTutorial) {
+        Tutorial tutorial = tutorialService.updateTutorial(id, updatedTutorial);
+        if (tutorial != null) {
+            return ResponseEntity.ok(tutorial);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
