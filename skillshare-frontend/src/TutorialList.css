@@ -58,26 +58,3 @@ button {
 button:hover {
   background-color: #0056b3;
 }
-
-.icon-buttons {
-  margin-top: 10px;
-}
-
-.icon {
-  font-size: 20px;
-  margin-right: 10px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.icon:hover {
-  transform: scale(1.2);
-}
-
-.edit-icon {
-  color: #28a745;
-}
-
-.delete-icon {
-  color: #dc3545;
-}

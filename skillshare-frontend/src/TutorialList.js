@@ -61,10 +61,6 @@ function TutorialList() {
 
             <p className="category-tag">Category: {tutorial.category}</p>
             <button onClick={() => handleStartTutorial(tutorial.id || tutorial._id)}>Start Tutorial</button>
-            <div className="icon-buttons">
-              <span className="icon edit-icon" onClick={() => handleEdit(tutorial.id || tutorial._id)}>✏️</span>
-              <span className="icon delete-icon" onClick={() => handleDelete(tutorial.id || tutorial._id)}>🗑️</span>
-            </div>
           </div>
         ))}
       </div>
