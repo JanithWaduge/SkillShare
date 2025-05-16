@@ -42,4 +42,13 @@ public class TutorialService {
             return tutorialRepository.save(existing);
         }).orElse(null);
     }
+
+    public boolean deleteTutorial(String id) {
+        if (tutorialRepository.existsById(id)) {
+            tutorialRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -46,4 +46,14 @@ public class TutorialController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTutorial(@PathVariable String id) {
+        boolean deleted = tutorialService.deleteTutorial(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
