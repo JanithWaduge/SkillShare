@@ -6,6 +6,7 @@ import SplashScreen from './SplashScreen';
 import App from './App';
 import Tutorials from './TutorialList';
 import LearnPage from './LearnPage';
+import ViewAllTutorials from './ViewAllTutorialsAdmin';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -17,6 +18,7 @@ root.render(
         <Route path="/posts" element={<App />} />
         <Route path="/tutorials" element={<Tutorials />} />
         <Route path="/learn/:id" element={<LearnPage />} />
+        <Route path="/admin/tutorials" element={<ViewAllTutorials />} />
       </Routes>
     </Router>
   </React.StrictMode>
