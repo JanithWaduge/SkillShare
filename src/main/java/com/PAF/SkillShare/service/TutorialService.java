@@ -24,4 +24,8 @@ public class TutorialService {
     public List<Tutorial> getAllTutorials() {
         return tutorialRepository.findAll();
     }
+
+    public Tutorial getTutorialById(String id) {
+        return tutorialRepository.findById(id).orElse(null);
+    }
 }
