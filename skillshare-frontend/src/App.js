@@ -1,36 +1,86 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Profile from './components/Profile';
+import AuthScreen from './pages/AuthScreen';
+import api from './axiosConfig';
 
 function App() {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null); // For image preview in edit mode
+  const [imagePreview, setImagePreview] = useState(null);
+  const [user, setUser] = useState(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const menuRef = useRef(null);
 
   const [newPost, setNewPost] = useState({
     title: '',
     description: '',
-    mediaUrls: [], // Keep the media URL inputs for display purposes
+    mediaUrls: [],
     category: '',
     postedBy: '',
     createdAt: '',
   });
 
+  // Fetch user profile
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/auth');
+        return;
+      }
+      const response = await api.get('/api/user/profile', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(response.data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/auth');
+      }
+    }
+  };
+
+  // Fetch posts
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:8081/api/posts');
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:8081/api/posts', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setPosts(response.data);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      if (error.response?.status === 401) {
+        navigate('/auth');
+      }
     }
   };
 
   useEffect(() => {
+    fetchProfile();
     fetchPosts();
+  }, []);
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleInputChange = (e) => {
@@ -48,16 +98,15 @@ function App() {
     const files = e.target.files;
     const fileUrls = Array.from(files).map((file) => URL.createObjectURL(file));
     setNewPost((prev) => ({ ...prev, mediaUrls: fileUrls }));
-
-    // Preview the selected image
     if (files && files[0]) {
-      setImagePreview(URL.createObjectURL(files[0])); // Show image preview in edit mode
+      setImagePreview(URL.createObjectURL(files[0]));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('title', newPost.title);
       formData.append('description', newPost.description);
@@ -65,7 +114,6 @@ function App() {
       formData.append('postedBy', newPost.postedBy);
       formData.append('createdAt', newPost.createdAt);
 
-      // Append the selected media files to FormData
       const mediaFiles = document.getElementById('mediaFiles').files;
       for (let i = 0; i < mediaFiles.length; i++) {
         formData.append('mediaFiles', mediaFiles[i]);
@@ -74,6 +122,7 @@ function App() {
       await axios.post('http://localhost:8081/api/posts/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -97,18 +146,21 @@ function App() {
   const openEditPost = (post) => {
     setSelectedPost(post);
     setEditMode(true);
-    setImagePreview(post.mediaUrls ? post.mediaUrls[0] : null); // Set preview image if available
+    setImagePreview(post.mediaUrls ? post.mediaUrls[0] : null);
   };
 
   const closeEdit = () => {
     setSelectedPost(null);
     setEditMode(false);
-    setImagePreview(null); // Reset preview image
+    setImagePreview(null);
   };
 
   const deletePost = async (id) => {
     try {
-      await axios.delete(`http://localhost:8081/api/posts/${id}`);
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:8081/api/posts/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       closeEdit();
       fetchPosts();
       toast.success('🗑 Post Deleted Successfully!');
@@ -118,8 +170,16 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setShowProfileMenu(false);
+    toast.success('👋 Logged out successfully!');
+    navigate('/auth');
+  };
+
   const saveEditedPost = async () => {
     try {
+      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('title', selectedPost.title);
       formData.append('description', selectedPost.description);
@@ -127,7 +187,6 @@ function App() {
       formData.append('postedBy', selectedPost.postedBy);
       formData.append('createdAt', selectedPost.createdAt);
 
-      // Append the selected media files to FormData
       const mediaFiles = document.getElementById('mediaFiles').files;
       for (let i = 0; i < mediaFiles.length; i++) {
         formData.append('mediaFiles', mediaFiles[i]);
@@ -136,6 +195,7 @@ function App() {
       await axios.put(`http://localhost:8081/api/posts/${selectedPost.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -155,7 +215,10 @@ function App() {
 
   const likePost = async (id) => {
     try {
-      await axios.put(`http://localhost:8081/api/posts/${id}/like`);
+      const token = localStorage.getItem('token');
+      await axios.put(`http://localhost:8081/api/posts/${id}/like`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       fetchPosts();
       toast.success('❤️ Liked!');
     } catch (error) {
@@ -166,9 +229,11 @@ function App() {
 
   const addComment = async (id, comment) => {
     try {
+      const token = localStorage.getItem('token');
       await axios.put(`http://localhost:8081/api/posts/${id}/comment`, comment, {
         headers: {
           'Content-Type': 'text/plain',
+          Authorization: `Bearer ${token}`,
         },
       });
       fetchPosts();
@@ -181,7 +246,10 @@ function App() {
 
   const deleteComment = async (postId, commentIndex) => {
     try {
-      await axios.delete(`http://localhost:8081/api/posts/${postId}/comment/${commentIndex}/delete`);
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:8081/api/posts/${postId}/comment/${commentIndex}/delete`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       fetchPosts();
       toast.success('🗑️ Comment Deleted!');
     } catch (error) {
@@ -192,285 +260,287 @@ function App() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // This will format the date as MM/DD/YYYY
+    return date.toLocaleDateString();
   };
 
   return (
-    <div className="app-container">
+    <div className="app-wrapper">
       <ToastContainer position="top-center" autoClose={1500} />
-      <div className="content-wrapper">
-        <h1 className="app-title">Talento</h1>
-
-        {posts.length === 0 ? (
-          <p className="no-posts">No posts available yet.</p>
-        ) : (
-          posts.map((post) => (
-            <div key={post.id} className="post-card">
-              <div className="post-header">
-                <div className="avatar">{post.postedBy?.charAt(0)}</div>
-                <div>
-                  <p className="posted-by">{post.postedBy}</p>
-                  <p className="post-date">{post.createdAt ? formatDate(post.createdAt) : 'Invalid Date'}</p>
-                </div>
-                <div className="edit-icon" onClick={() => openEditPost(post)}>
-                  ✏️
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="app-container">
+              <div className="header">
+                <h1 className="app-title">Talento</h1>
+                <div className="header-actions">
+                  <div className="profile-container" ref={menuRef}>
+                    <img
+                      src={user?.profileImageUrl || 'https://via.placeholder.com/40'}
+                      alt="Profile"
+                      className="profile-icon"
+                      onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    />
+                    {showProfileMenu && (
+                      <div className="profile-menu">
+                        <button
+                          className="profile-menu-item"
+                          onClick={() => {
+                            setShowProfileMenu(false);
+                            navigate('/profile');
+                          }}
+                        >
+                          View Profile
+                        </button>
+                        <button
+                          className="profile-menu-item logout"
+                          onClick={handleLogout}
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-              <h2 className="post-title">{post.title}</h2>
-              <p className="post-description">{post.description}</p>
-              <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
-
-              {/* Render Media (Image) */}
-              {post.mediaUrls && post.mediaUrls.map((url, index) => (
-                <img key={index} src={`http://localhost:8081${url}`} alt={`Post Media ${index + 1}`} className="post-image" />
-              ))}
-
-              <button
-                className={`like-button ${post.likes > 0 ? 'liked' : ''}`}
-                onClick={() => likePost(post.id)}
-              >
-                ❤️ {post.likes || 0} Likes
-              </button>
-
-              <div className="comments-section">
-                <h4>Comments</h4>
-                {post.comments &&
-                  post.comments.map((comment, index) => (
-                    <p key={index} className="comment">
-                      {comment}
-                      <span
-                        className="delete-comment-icon"
-                        onClick={() => deleteComment(post.id, index)}
+              <div className="content-wrapper">
+                {posts.length === 0 ? (
+                  <p className="no-posts">No posts available yet.</p>
+                ) : (
+                  posts.map((post) => (
+                    <div key={post.id} className="post-card">
+                      <div className="post-header">
+                        <div className="avatar">{post.postedBy?.charAt(0)}</div>
+                        <div>
+                          <p className="posted-by">{post.postedBy}</p>
+                          <p className="post-date">{post.createdAt ? formatDate(post.createdAt) : 'Invalid Date'}</p>
+                        </div>
+                        <div className="edit-icon" onClick={() => openEditPost(post)}>
+                          ✏️
+                        </div>
+                      </div>
+                      <h2 className="post-title">{post.title}</h2>
+                      <p className="post-description">{post.description}</p>
+                      <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
+                      {post.mediaUrls &&
+                        post.mediaUrls.map((url, index) => (
+                          <img
+                            key={index}
+                            src={`http://localhost:8081${url}`}
+                            alt={`Post Media ${index + 1}`}
+                            className="post-image"
+                          />
+                        ))}
+                      <button
+                        className={`like-button ${post.likes > 0 ? 'liked' : ''}`}
+                        onClick={() => likePost(post.id)}
                       >
-                        🗑️
-                      </span>
-                    </p>
-                  ))}
-                <AddCommentForm postId={post.id} addComment={addComment} />
+                        ❤️ {post.likes || 0} Likes
+                      </button>
+                      <div className="comments-section">
+                        <h4>Comments</h4>
+                        {post.comments &&
+                          post.comments.map((comment, index) => (
+                            <p key={index} className="comment">
+                              {comment}
+                              <span
+                                className="delete-comment-icon"
+                                onClick={() => deleteComment(post.id, index)}
+                              >
+                                🗑️
+                              </span>
+                            </p>
+                          ))}
+                        <AddCommentForm postId={post.id} addComment={addComment} />
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
+              <button className="floating-button" onClick={() => setShowForm(true)}>
+                +
+              </button>
+              {showForm && (
+                <div className="modal-overlay">
+                  <div className="modal">
+                    <h2 className="modal-title">Create New Post</h2>
+                    <form onSubmit={handleSubmit} className="form">
+                      <input
+                        type="text"
+                        name="title"
+                        placeholder="Title"
+                        value={newPost.title}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <textarea
+                        name="description"
+                        placeholder="Description"
+                        value={newPost.description}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      {[0, 1, 2].map((i) => (
+                        <input
+                          key={i}
+                          type="text"
+                          placeholder={`Media URL ${i + 1}`}
+                          value={newPost.mediaUrls[i] || ''}
+                          onChange={(e) => handleMediaChange(e, i)}
+                        />
+                      ))}
+                      <input
+                        type="file"
+                        id="mediaFiles"
+                        multiple
+                        onChange={handleFileChange}
+                        required
+                      />
+                      <select
+                        name="category"
+                        value={newPost.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="" disabled>
+                          Select Category
+                        </option>
+                        <option value="Technology">Technology</option>
+                        <option value="Education">Education</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Health">Health</option>
+                        <option value="Business">Business</option>
+                        <option value="Travel">Travel</option>
+                      </select>
+                      <input
+                        type="text"
+                        name="postedBy"
+                        placeholder="Posted By"
+                        value={newPost.postedBy}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <input
+                        type="date"
+                        name="createdAt"
+                        value={newPost.createdAt}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <div className="form-buttons">
+                        <button type="submit" className="btn-primary">
+                          Submit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowForm(false)}
+                          className="btn-secondary"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+              {editMode && selectedPost && (
+                <div className="modal-overlay">
+                  <div className="modal">
+                    <h2 className="modal-title">Edit Post</h2>
+                    <form
+                      className="form"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        saveEditedPost();
+                      }}
+                    >
+                      <input
+                        type="text"
+                        name="title"
+                        placeholder="Title"
+                        value={selectedPost.title}
+                        onChange={handleSelectedPostChange}
+                        required
+                      />
+                      <textarea
+                        name="description"
+                        placeholder="Description"
+                        value={selectedPost.description}
+                        onChange={handleSelectedPostChange}
+                        required
+                      />
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="Image Preview"
+                          className="post-image"
+                        />
+                      )}
+                      <input
+                        type="file"
+                        id="mediaFiles"
+                        onChange={handleFileChange}
+                      />
+                      <select
+                        name="category"
+                        value={selectedPost.category}
+                        onChange={handleSelectedPostChange}
+                        required
+                      >
+                        <option value="" disabled>
+                          Select Category
+                        </option>
+                        <option value="Technology">Technology</option>
+                        <option value="Education">Education</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Health">Health</option>
+                        <option value="Business">Business</option>
+                        <option value="Travel">Travel</option>
+                      </select>
+                      <input
+                        type="text"
+                        name="postedBy"
+                        placeholder="Posted By"
+                        value={selectedPost.postedBy}
+                        onChange={handleSelectedPostChange}
+                        required
+                      />
+                      <input
+                        type="date"
+                        name="createdAt"
+                        value={selectedPost.createdAt}
+                        onChange={handleSelectedPostChange}
+                        required
+                      />
+                      <div className="form-buttons">
+                        <button type="submit" className="btn-primary">
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deletePost(selectedPost.id)}
+                          className="btn-danger"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          type="button"
+                          onClick={closeEdit}
+                          className="btn-secondary"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
-          ))
-        )}
-      </div>
-
-      <button className="floating-button" onClick={() => setShowForm(true)}>+</button>
-
-      {showForm && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2 className="modal-title">Create New Post</h2>
-            <form onSubmit={handleSubmit} className="form">
-              <input
-                type="text"
-                name="title"
-                placeholder="Title"
-                value={newPost.title}
-                onChange={handleInputChange}
-                required
-              />
-              <textarea
-                name="description"
-                placeholder="Description"
-                value={newPost.description}
-                onChange={handleInputChange}
-                required
-              />
-              {[0, 1, 2].map((i) => (
-                <input
-                  key={i}
-                  type="text"
-                  placeholder={`Media URL ${i + 1}`}
-                  value={newPost.mediaUrls[i] || ''}
-                  onChange={(e) => handleMediaChange(e, i)}
-                />
-              ))}
-
-              <input
-                type="file"
-                id="mediaFiles"
-                multiple
-                onChange={handleFileChange}
-                required
-              />
-
-              {/* Category Dropdown */}
-
-              <select
-                name="category"
-                value={newPost.category}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="" disabled>Select Category</option>
-                <option value="Technology">Technology</option>
-                <option value="Education">Education</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Health">Health</option>
-                <option value="Business">Business</option>
-                <option value="Travel">Travel</option>
-              </select>
-
-              <input
-                type="text"
-                name="postedBy"
-                placeholder="Posted By"
-                value={newPost.postedBy}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="date"
-                name="createdAt"
-                placeholder="Created At"
-                value={newPost.createdAt}
-                onChange={handleInputChange}
-                required
-              />
-
-
-              <input type="text" name="postedBy" placeholder="Posted By" value={newPost.postedBy} onChange={handleInputChange} required />
-              <input type="text" name="createdAt" placeholder="Created At (e.g., 2025-04-26)" value={newPost.createdAt} onChange={handleInputChange} required />
-
-
-              <div className="form-buttons">
-                <button type="submit" className="btn-primary">Submit</button>
-                <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {editMode && selectedPost && (
-        <div className="modal-overlay">
-          <div className="modal">
-
-            <h2 className="modal-title">Edit Post</h2>
-            <form
-              className="form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                saveEditedPost();
-              }}
-            >
-              <input
-                type="text"
-                name="title"
-                placeholder="Title"
-                value={selectedPost.title}
-                onChange={handleSelectedPostChange}
-                required
-              />
-              <textarea
-                name="description"
-                placeholder="Description"
-                value={selectedPost.description}
-                onChange={handleSelectedPostChange}
-                required
-              />
-              {/* Render the current image */}
-              {imagePreview && <img src={imagePreview} alt="Image Preview" className="post-image" />}
-              <input
-                type="file"
-                id="mediaFiles"
-                onChange={handleFileChange}
-              />
-              <select
-                name="category"
-                value={selectedPost.category}
-                onChange={handleSelectedPostChange}
-                required
-              >
-                <option value="" disabled>Select Category</option>
-                <option value="Technology">Technology</option>
-                <option value="Education">Education</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Health">Health</option>
-                <option value="Business">Business</option>
-                <option value="Travel">Travel</option>
-              </select>
-              <input
-                type="text"
-                name="postedBy"
-                placeholder="Posted By"
-                value={selectedPost.postedBy}
-                onChange={handleSelectedPostChange}
-                required
-              />
-              <input
-                type="date"
-                name="createdAt"
-                placeholder="Created At"
-                value={selectedPost.createdAt}
-                onChange={handleSelectedPostChange}
-                required
-              />
-              <div className="form-buttons">
-                <button type="submit" className="btn-primary">Save</button>
-                <button
-                  type="button"
-                  onClick={() => deletePost(selectedPost.id)}
-                  className="btn-danger"
-                >
-                  Delete
-                </button>
-                <button
-                  type="button"
-                  onClick={closeEdit}
-                  className="btn-secondary"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-
-            {editMode ? (
-              <>
-                <input type="text" name="title" value={selectedPost.title} onChange={handleSelectedPostChange} />
-                <textarea name="description" value={selectedPost.description} onChange={handleSelectedPostChange} />
-
-                {/* Category Dropdown for Editing */}
-                <select
-                  name="category"
-                  value={selectedPost.category}
-                  onChange={handleSelectedPostChange}
-                >
-                  <option value="" disabled>Select Category</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Education">Education</option>
-                  <option value="Entertainment">Entertainment</option>
-                  <option value="Health">Health</option>
-                  <option value="Business">Business</option>
-                  <option value="Travel">Travel</option>
-                </select>
-
-                <input type="text" name="postedBy" value={selectedPost.postedBy} onChange={handleSelectedPostChange} />
-                <input type="text" name="createdAt" value={selectedPost.createdAt} onChange={handleSelectedPostChange} />
-
-                <div className="form-buttons">
-                  <button onClick={saveEditedPost} className="btn-primary">Save</button>
-                  <button onClick={() => setEditMode(false)} className="btn-secondary">Cancel</button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 className="modal-title">{selectedPost.title}</h2>
-                <p className="post-description">{selectedPost.description}</p>
-                <p className="post-details">Category: {selectedPost.category}</p>
-                <p className="post-details">Posted By: {selectedPost.postedBy}</p>
-                <p className="post-details">Created At: {selectedPost.createdAt}</p>
-
-                <div className="form-buttons">
-                  <button onClick={() => setEditMode(true)} className="btn-primary">Edit</button>
-                  <button onClick={() => deletePost(selectedPost.id)} className="btn-danger">Delete</button>
-                  <button onClick={deletePost} className="btn-secondary">Close</button>
-                </div>
-              </>
-            )}
-
-          </div>
-        </div>
-      )}
+          }
+        />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/auth" element={<AuthScreen />} />
+      </Routes>
     </div>
   );
 }
@@ -493,7 +563,9 @@ function AddCommentForm({ postId, addComment }) {
         value={comment}
         onChange={(e) => setComment(e.target.value)}
       />
-      <button type="submit" className="btn-primary">Post</button>
+      <button type="submit" className="btn-primary">
+        Post
+      </button>
     </form>
   );
 }
