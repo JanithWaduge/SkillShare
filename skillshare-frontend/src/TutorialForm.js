@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './TutorialForm.css';
 
+const IMAGE_BASE_URL = "http://localhost:8081";
+
 const TutorialForm = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState(null);
@@ -29,10 +31,10 @@ const TutorialForm = () => {
 
   const handleSave = () => {
     axios.put(`http://localhost:8081/api/tutorials/${id}`, formData)
-    .then(() => {
-            alert('Tutorial updated successfully!');
-            navigate(`/admin/tutorials`);
-    })
+      .then(() => {
+        alert('Tutorial updated successfully!');
+        navigate(`/admin/tutorials`);
+      })
       .catch((err) => {
         console.error('Error updating tutorial:', err);
         alert('Failed to update');
@@ -42,7 +44,10 @@ const TutorialForm = () => {
   const handleDelete = () => {
     if (window.confirm('Are you sure to delete this tutorial?')) {
       axios.delete(`http://localhost:8081/api/tutorials/${id}`)
-        .then(() => alert('Tutorial deleted'))
+        .then(() => {
+          alert('Tutorial deleted');
+          navigate(`/admin/tutorials`);
+        })
         .catch((err) => {
           console.error('Error deleting tutorial:', err);
           alert('Failed to delete');
@@ -85,6 +90,18 @@ const TutorialForm = () => {
 
       <input type="text" name="createdBy" value={formData.createdBy} onChange={handleChange} placeholder="Created By" />
       <input type="datetime-local" name="createdAt" value={formData.createdAt} onChange={handleChange} />
+
+      {formData.imageUrl && (
+        <div style={{ marginBottom: '15px' }}>
+          <label>Current Image</label>
+          <br />
+          <img
+            src={`${IMAGE_BASE_URL}${formData.imageUrl}`}
+            alt="Tutorial"
+            style={{ maxWidth: '300px', maxHeight: '200px', marginTop: '10px' }}
+          />
+        </div>
+      )}
 
       <div className="button-group">
         <button className="save-btn" onClick={handleSave}>Save</button>
