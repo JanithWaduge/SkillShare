@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './AddTutorialForm.css';
+import { useNavigate } from 'react-router-dom';
 
 const AddTutorialForm = () => {
   const [formData, setFormData] = useState({
@@ -13,9 +14,18 @@ const AddTutorialForm = () => {
     createdBy: '',
     createdAt: ''
   });
+  const [image, setImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
   };
 
   const handleArrayChange = (index, field, value) => {
@@ -30,12 +40,46 @@ const AddTutorialForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     try {
-      await axios.post('http://localhost:8081/api/tutorials', formData);
+      const formDataToSend = new FormData();
+
+      // Convert formData to JSON string
+      const tutorialJson = JSON.stringify(formData);
+      formDataToSend.append('tutorial', tutorialJson);
+
+      // Append the image if it exists
+      if (image) {
+        formDataToSend.append('image', image);
+      }
+
+      const response = await axios.post('http://localhost:8081/api/tutorials', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
       alert('Tutorial added successfully!');
+      // Reset form after successful submission
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        estimatedCompletionTime: '',
+        steps: [''],
+        resources: [''],
+        createdBy: '',
+        createdAt: ''
+      });
+      setImage(null);
+
+      navigate(`/admin/tutorials`);
     } catch (err) {
       console.error('Error adding tutorial:', err);
-      alert('Failed to add tutorial');
+      alert('Failed to add tutorial. Please check the console for details.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -63,7 +107,26 @@ const AddTutorialForm = () => {
       <input type="text" name="createdBy" placeholder="Created By" value={formData.createdBy} onChange={handleChange} required />
       <input type="datetime-local" name="createdAt" value={formData.createdAt} onChange={handleChange} required />
 
-      <button type="submit">Submit Tutorial</button>
+      <label>Upload Image</label>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+      />
+      {image && (
+        <div style={{ marginTop: '10px' }}>
+          <img
+            src={URL.createObjectURL(image)}
+            alt="Preview"
+            style={{ maxWidth: '200px', maxHeight: '200px' }}
+          />
+          <p>{image.name}</p>
+        </div>
+      )}
+
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Submitting...' : 'Submit Tutorial'}
+      </button>
     </form>
   );
 };

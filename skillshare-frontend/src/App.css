@@ -94,6 +94,54 @@ select:hover {
   background-color: #0056b3;
 }
 
+.profile-container {
+  position: relative;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+.profile-icon:hover {
+  border-color: #083c7a;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+}
+
+.profile-menu-item {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.profile-menu-item:hover {
+  background: #f5f5f5;
+}
+
+.profile-menu-item.logout {
+  color: #e53e3e;
+}
+
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;

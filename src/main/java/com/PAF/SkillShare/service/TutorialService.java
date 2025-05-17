@@ -5,19 +5,32 @@ import com.PAF.SkillShare.repository.TutorialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Service
 public class TutorialService {
 
     private final TutorialRepository tutorialRepository;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public TutorialService(TutorialRepository tutorialRepository) {
+    public TutorialService(TutorialRepository tutorialRepository,
+                           FileStorageService fileStorageService) {
         this.tutorialRepository = tutorialRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     public Tutorial createTutorial(Tutorial tutorial) {
+        return tutorialRepository.save(tutorial);
+    }
+
+    public Tutorial createTutorialWithImage(Tutorial tutorial, MultipartFile imageFile) {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String filename = fileStorageService.store(imageFile);
+            tutorial.setImageUrl("/uploads/" + filename);
+        }
         return tutorialRepository.save(tutorial);
     }
 

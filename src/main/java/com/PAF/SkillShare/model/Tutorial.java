@@ -17,6 +17,7 @@ public class Tutorial {
     private List<String> resources; // URLs or references
     private String createdBy; // user id or name
     private String createdAt; // optional, to track creation time
+    private String imageUrl;
 
     // Getters and Setters
     public String getId() { return id; }
@@ -45,4 +46,7 @@ public class Tutorial {
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
