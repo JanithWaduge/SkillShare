@@ -103,7 +103,7 @@ select:hover {
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
-  border: 2px solid #0a66c2;
+  border: 2px solid white;
 }
 
 .profile-icon:hover {
