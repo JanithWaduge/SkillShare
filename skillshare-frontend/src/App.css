@@ -14,6 +14,37 @@ body {
   max-width: 1000px;
   margin: 0 auto;
 }
+/* Style for all select dropdowns */
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 16px;
+  color: #333;
+  transition: all 0.3s ease;
+  appearance: none; /* Remove default ugly arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23999" class="bi bi-caret-down-fill" viewBox="0 0 16 16"> <path d="M7.247 11.14 2.451 5.658c-.566-.628-.106-1.658.753-1.658h9.592c.86 0 1.32 1.03.753 1.658l-4.796 5.482a1 1 0 0 1-1.506 0z"/> </svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+}
+
+/* On focus */
+select:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* When hovering */
+select:hover {
+  border-color: #555;
+}
+
 
 /* Modal and form layout using grid */
 .form {
