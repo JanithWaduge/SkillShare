@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import './ViewAllTutorialsAdmin.css';
 import axios from 'axios';
 
 const ViewAllTutorials = () => {
+
   const [tutorials, setTutorials] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('http://localhost:8081/api/tutorials')
@@ -15,9 +19,13 @@ const ViewAllTutorials = () => {
       });
   }, []);
 
+  const handleAddTutorial = () => {
+      navigate('/admin/tutorials/add');
+    };
+
   const handleEdit = (id) => {
     alert(`Edit tutorial ${id}`);
-    // You can navigate to edit page here
+    navigate(`/admin/tutorials/edit/${id}`);
   };
 
   const handleDelete = (id) => {
@@ -36,7 +44,11 @@ const ViewAllTutorials = () => {
 
   return (
     <div className="tutorials-container">
-      <h2>All Tutorials</h2>
+
+        <div className="tutorials-header">
+          <h2>All Tutorials</h2>
+          <button className="add-btn" onClick={handleAddTutorial}>+ Add Tutorial</button>
+        </div>
 
       <table className="tutorials-table">
         <thead>
