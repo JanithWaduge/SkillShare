@@ -25,7 +25,7 @@ const ViewAllTutorials = () => {
 
   const handleEdit = (id) => {
     alert(`Edit tutorial ${id}`);
-    navigate(`/admin/tutorials/edit/${id}`);
+    navigate(`/admin/tutorial-form/${id}`);
   };
 
   const handleDelete = (id) => {

@@ -8,6 +8,7 @@ import Tutorials from './TutorialList';
 import LearnPage from './LearnPage';
 import ViewAllTutorials from './ViewAllTutorialsAdmin';
 import AddTutorialForm from './AddTutorialForm';
+import TutorialForm from './TutorialForm';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -21,6 +22,7 @@ root.render(
         <Route path="/learn/:id" element={<LearnPage />} />
         <Route path="/admin/tutorials" element={<ViewAllTutorials />} />
         <Route path="/admin/tutorials/add" element={<AddTutorialForm />} />
+        <Route path="/admin/tutorial-form/:id" element={<TutorialForm />} />
       </Routes>
     </Router>
   </React.StrictMode>
