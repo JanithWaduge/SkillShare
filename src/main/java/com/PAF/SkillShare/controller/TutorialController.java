@@ -2,10 +2,13 @@ package com.PAF.SkillShare.controller;
 
 import com.PAF.SkillShare.model.Tutorial;
 import com.PAF.SkillShare.service.TutorialService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
@@ -17,9 +20,18 @@ public class TutorialController {
     @Autowired
     private TutorialService tutorialService;
 
-    @PostMapping
-    public Tutorial createTutorial(@RequestBody Tutorial tutorial) {
-        return tutorialService.createTutorial(tutorial);
+
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Tutorial createTutorial(
+            @RequestPart("tutorial") String tutorialJson,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Tutorial tutorial = objectMapper.readValue(tutorialJson, Tutorial.class);
+            return tutorialService.createTutorialWithImage(tutorial, imageFile);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing tutorial data", e);
+        }
     }
 
     @GetMapping

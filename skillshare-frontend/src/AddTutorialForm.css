@@ -51,3 +51,24 @@
 .tutorial-form button:hover {
   background-color: #ff8800;
 }
+
+.tutorial-form input[type="file"] {
+  width: 100%;
+  padding: 10px 0;
+  margin-bottom: 15px;
+}
+
+.tutorial-form img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.tutorial-form button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.tutorial-form button[disabled]:hover {
+  background-color: #ccc;
+}
