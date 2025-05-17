@@ -3,17 +3,24 @@ package com.PAF.SkillShare.controller;
 import com.PAF.SkillShare.model.Tutorial;
 import com.PAF.SkillShare.service.TutorialService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/tutorials")
-@CrossOrigin(origins = "*")
 public class TutorialController {
 
     @Autowired
     private TutorialService tutorialService;
+
+    @PostMapping
+    public Tutorial createTutorial(@RequestBody Tutorial tutorial) {
+        return tutorialService.createTutorial(tutorial);
+    }
 
     @GetMapping
     public List<Tutorial> getAllTutorials() {
@@ -21,27 +28,32 @@ public class TutorialController {
     }
 
     @GetMapping("/{id}")
-    public Tutorial getTutorialById(@PathVariable String id) {
-        return tutorialService.getTutorialById(id).orElse(null);
-    }
-
-    @PostMapping
-    public Tutorial createTutorial(@RequestBody Tutorial tutorial) {
-        return tutorialService.createTutorial(tutorial);
+    public ResponseEntity<Tutorial> getTutorialById(@PathVariable String id) {
+        Tutorial tutorial = tutorialService.getTutorialById(id);
+        if (tutorial != null) {
+            return ResponseEntity.ok(tutorial);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}")
-    public Tutorial updateTutorial(@PathVariable String id, @RequestBody Tutorial tutorial) {
-        return tutorialService.updateTutorial(id, tutorial);
+    public ResponseEntity<Tutorial> updateTutorial(@PathVariable String id, @RequestBody Tutorial updatedTutorial) {
+        Tutorial tutorial = tutorialService.updateTutorial(id, updatedTutorial);
+        if (tutorial != null) {
+            return ResponseEntity.ok(tutorial);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTutorial(@PathVariable String id) {
-        tutorialService.deleteTutorial(id);
-    }
-
-    @GetMapping("/category/{category}")
-    public List<Tutorial> getTutorialsByCategory(@PathVariable String category) {
-        return tutorialService.getTutorialsByCategory(category);
+    public ResponseEntity<Void> deleteTutorial(@PathVariable String id) {
+        boolean deleted = tutorialService.deleteTutorial(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

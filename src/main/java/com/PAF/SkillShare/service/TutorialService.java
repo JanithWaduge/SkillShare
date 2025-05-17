@@ -6,54 +6,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TutorialService {
 
+    private final TutorialRepository tutorialRepository;
+
     @Autowired
-    private TutorialRepository tutorialRepository;
-
-    // Get all tutorials
-    public List<Tutorial> getAllTutorials() {
-        return tutorialRepository.findAll();
+    public TutorialService(TutorialRepository tutorialRepository) {
+        this.tutorialRepository = tutorialRepository;
     }
 
-    // Get a tutorial by ID
-    public Optional<Tutorial> getTutorialById(String id) {
-        return tutorialRepository.findById(id);
-    }
-
-    // Create a new tutorial
     public Tutorial createTutorial(Tutorial tutorial) {
         return tutorialRepository.save(tutorial);
     }
 
-    // Update an existing tutorial
+    public List<Tutorial> getAllTutorials() {
+        return tutorialRepository.findAll();
+    }
+
+    public Tutorial getTutorialById(String id) {
+        return tutorialRepository.findById(id).orElse(null);
+    }
+
     public Tutorial updateTutorial(String id, Tutorial updatedTutorial) {
-        Optional<Tutorial> optionalTutorial = tutorialRepository.findById(id);
+        return tutorialRepository.findById(id).map(existing -> {
+            existing.setTitle(updatedTutorial.getTitle());
+            existing.setDescription(updatedTutorial.getDescription());
+            existing.setCategory(updatedTutorial.getCategory());
+            existing.setEstimatedCompletionTime(updatedTutorial.getEstimatedCompletionTime());
+            existing.setSteps(updatedTutorial.getSteps());
+            existing.setResources(updatedTutorial.getResources());
+            existing.setCreatedBy(updatedTutorial.getCreatedBy());
+            existing.setCreatedAt(updatedTutorial.getCreatedAt());
+            return tutorialRepository.save(existing);
+        }).orElse(null);
+    }
 
-        if (optionalTutorial.isPresent()) {
-            Tutorial existingTutorial = optionalTutorial.get();
-            existingTutorial.setTitle(updatedTutorial.getTitle());
-            existingTutorial.setDescription(updatedTutorial.getDescription());
-            existingTutorial.setCategory(updatedTutorial.getCategory());
-            existingTutorial.setSteps(updatedTutorial.getSteps());
-            existingTutorial.setResources(updatedTutorial.getResources());
-            existingTutorial.setEstimatedCompletionTime(updatedTutorial.getEstimatedCompletionTime());
-            return tutorialRepository.save(existingTutorial);
+    public boolean deleteTutorial(String id) {
+        if (tutorialRepository.existsById(id)) {
+            tutorialRepository.deleteById(id);
+            return true;
         } else {
-            return null; // Or throw an exception
+            return false;
         }
-    }
-
-    // Delete a tutorial
-    public void deleteTutorial(String id) {
-        tutorialRepository.deleteById(id);
-    }
-
-    // Get tutorials by category
-    public List<Tutorial> getTutorialsByCategory(String category) {
-        return tutorialRepository.findByCategory(category);
     }
 }
