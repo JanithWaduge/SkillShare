@@ -12,7 +12,7 @@ public class Post {
     private String id;
     private String title;
     private String description;
-    private List<String> mediaUrls; // store up to 3 URLs
+    private List<String> mediaUrls; // store up to 3 URLs (can be image or video paths)
     private String category; // Technology, Business, etc.
     private String postedBy; // username or id
     private String createdAt; // date

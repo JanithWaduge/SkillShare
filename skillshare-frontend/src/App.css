@@ -313,3 +313,9 @@ select:hover {
   margin-top: 10px;
   margin-bottom: 20px;
 }
+.post-media {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+}

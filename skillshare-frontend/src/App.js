@@ -220,10 +220,19 @@ function App() {
               <p className="post-description">{post.description}</p>
               <p className="post-category">Category: {post.category || 'Uncategorized'}</p>
 
-              {/* Render Media (Image) */}
-              {post.mediaUrls && post.mediaUrls.map((url, index) => (
-                <img key={index} src={`http://localhost:8081${url}`} alt={`Post Media ${index + 1}`} className="post-image" />
-              ))}
+            {post.mediaUrls && post.mediaUrls.map((url, index) => {
+              const fileUrl = `http://localhost:8081${url}`;
+              const isVideo = fileUrl.endsWith('.mp4') || fileUrl.endsWith('.mov') || fileUrl.endsWith('.webm');
+              return isVideo ? (
+                <video key={index} controls className="post-media">
+                  <source src={fileUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img key={index} src={fileUrl} alt={`Post Media ${index + 1}`} className="post-image" />
+              );
+            })}
+
 
               <button
                 className={`like-button ${post.likes > 0 ? 'liked' : ''}`}
