@@ -38,7 +38,8 @@ public class PostController {
     }
 
     // Create a post with media
-    @PostMapping("/upload")
+    @PostMapping("/uploadWithMedia")
+
     public ResponseEntity<Post> createPostWithMedia(
             @RequestParam("title") String title,
             @RequestParam("description") String description,
