@@ -108,7 +108,7 @@ function AuthScreen() {
       
       localStorage.setItem('token', response.data.token);
       setAlert({ message: response.data.message, type: 'success' });
-      navigate('/dashboard');
+      navigate('/posts');
     } catch (error) {
       let errorMessage = 'An error occurred. Please try again.';
       let errorDetails = null;
