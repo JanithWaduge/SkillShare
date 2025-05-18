@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaRobot } from 'react-icons/fa';
+import { faRobot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import api from '../axiosConfig';
 import Alert from './Alert';
 import './profile.css';
@@ -164,25 +165,6 @@ function Profile() {
     }
   };
 
-  const renderRoadmapContent = (content) => {
-    const lines = content.split('\n');
-    return lines.map((line, index) => {
-      if (line.startsWith('### ')) {
-        return <h3 key={index}>{line.replace('### ', '')}</h3>;
-      } else if (line.startsWith('- ')) {
-        return (
-          <ul key={index}>
-            <li>{line.replace('- ', '')}</li>
-          </ul>
-        );
-      } else if (line.trim() === '') {
-        return <br key={index} />;
-      } else {
-        return <p key={index}>{line}</p>;
-      }
-    });
-  };
-
   if (isLoading && !user) {
     return <div className="loading">Loading...</div>;
   }
@@ -298,24 +280,25 @@ function Profile() {
           )}
         </div>
         {showRoadmap && roadmap && (
-          <div className="roadmap-section">
-            <div className="roadmap-header">
-              <h2 className="roadmap-title">
-                <FaRobot /> AI-Powered Career Roadmap
-              </h2>
+          <div className="section">
+            <h2 className="section-title">
+              <FontAwesomeIcon icon={faRobot} style={{marginRight: '10px'}} />
+              AI-Powered Career Roadmap
+            </h2>
+            <div className="roadmap-container">
+              <div className="roadmap-header">
+                <FontAwesomeIcon icon={faRobot} style={{marginRight: '8px'}} />
+                AI-Powered Career Roadmap
+              </div>
+              <pre className="roadmap-text">{roadmap}</pre>
             </div>
-            <div className="roadmap-content">
-              {renderRoadmapContent(roadmap)}
-            </div>
-            <div className="roadmap-actions">
-              <button
-                onClick={() => setShowRoadmap(false)}
-                className="button"
-                disabled={isLoading}
-              >
-                Hide Roadmap
-              </button>
-            </div>
+            <button
+              onClick={() => setShowRoadmap(false)}
+              className="button"
+              disabled={isLoading}
+            >
+              Hide Roadmap
+            </button>
           </div>
         )}
         <div className="actions">
@@ -347,10 +330,10 @@ function Profile() {
               </button>
               <button
                 onClick={handleFetchRoadmap}
-                className="button roadmap-button"
+                className="button"
                 disabled={isLoading}
               >
-                <FaRobot className="button-icon" /> Show Roadmap AI
+                Show Roadmap AI
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
