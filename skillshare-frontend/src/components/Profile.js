@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { faRobot } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRobot, faMagicWandSparkles } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Add this line
 import api from '../axiosConfig';
 import Alert from './Alert';
 import './profile.css';
@@ -142,28 +142,30 @@ function Profile() {
     }
   };
 
-  const handleFetchRoadmap = async () => {
-    setIsLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get('/api/user/career-roadmap', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setRoadmap(response.data.roadmap);
-      setShowRoadmap(true);
-      setAlert({
-        message: 'Career roadmap generated successfully!',
-        type: 'success',
-      });
-    } catch (error) {
-      setAlert({
-        message: error.response?.data?.error || 'Failed to generate career roadmap. Please try again.',
-        type: 'error',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+/* Update the handleFetchRoadmap function in Profile.js to use the new alert style */
+const handleFetchRoadmap = async () => {
+  setIsLoading(true);
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.get('/api/user/career-roadmap', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setRoadmap(response.data.roadmap);
+    setShowRoadmap(true);
+    setAlert({
+      message: 'Career roadmap generated successfully!',
+      type: 'roadmap-success', // New type for special styling
+    });
+  } catch (error) {
+    setAlert({
+      message: error.response?.data?.error || 'Failed to generate career roadmap. Please try again.',
+      type: 'error',
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   if (isLoading && !user) {
     return <div className="loading">Loading...</div>;
@@ -175,13 +177,14 @@ function Profile() {
 
   return (
     <div className="container">
-      {alert && (
-        <Alert
-          message={alert.message}
-          type={alert.type}
-          onClose={() => setAlert(null)}
-        />
-      )}
+{alert && (
+  <Alert
+    message={alert.message}
+    type={alert.type}
+    onClose={() => setAlert(null)}
+    className={alert.type === 'roadmap-success' ? 'alert-roadmap-success' : ''}
+  />
+)}
       <div className="profile-card">
         <div className="profile-header">
           <img
@@ -280,8 +283,8 @@ function Profile() {
           )}
         </div>
         {showRoadmap && roadmap && (
-          <div className="section">
-            <h2 className="section-title">
+          <div className="ai-section">
+            <h2 className="ai-section-title">
               <FontAwesomeIcon icon={faRobot} style={{marginRight: '10px'}} />
               AI-Powered Career Roadmap
             </h2>
@@ -328,13 +331,14 @@ function Profile() {
               >
                 Edit Profile
               </button>
-              <button
-                onClick={handleFetchRoadmap}
-                className="button"
-                disabled={isLoading}
-              >
-                Show Roadmap AI
-              </button>
+<button
+  onClick={handleFetchRoadmap}
+  className="ai-button"
+  disabled={isLoading}
+>
+  <FontAwesomeIcon icon={faMagicWandSparkles} style={{marginRight: '8px'}} />
+  Show Roadmap AI
+</button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="delete-button"
