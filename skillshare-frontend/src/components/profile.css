@@ -11,6 +11,7 @@
 
 .container {
   min-height: 100vh;
+  min-width: 20vw;
   background-color: #f5f7fa;
   display: flex;
   justify-content: center;
@@ -22,6 +23,7 @@
 .profile-card {
   background-color: #ffffff;
   border-radius: 12px;
+  padding: 4px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   max-width: 900px;
   width: 100%;
@@ -32,6 +34,8 @@
 .profile-header {
   background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
   padding: 30px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
   display: flex;
   align-items: center;
   color: #ffffff;
@@ -75,14 +79,27 @@
   border-bottom: 1px solid #e8ecef;
 }
 
+.ai-section{
+  padding: 25px 30px;
+  border-bottom: 1px solid #ffffff;
+  background-color: #e8e8e8;
+  border-radius: 8px;
+  border-width: 2px;
+
+}
+
 .section-title {
   font-size: 20px;
   font-weight: 600;
-  color: #1a202c;
+  color: #000000;
   margin: 0 0 15px;
   letter-spacing: 0.3px;
   display: flex;
   align-items: center;
+}
+
+.ai-section-title{
+    color: #66409f;
 }
 
 .text {
@@ -129,10 +146,33 @@
   margin-bottom: 20px;
 }
 
+/* AI Button specific styles */
+.ai-button {
+  background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+  display: flex;
+  align-items: center;
+    font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+}
+
+.ai-button:hover {
+  background: linear-gradient(135deg, #5d3a99 0%, #8075fc 100%);
+}
+
+/* Enhanced Alert for Roadmap Success */
+.alert-roadmap-success {
+  background: linear-gradient(135deg, #b2b9f2 0%, #9d50bb 100%);
+  border-radius: 12px;
+  padding: 15px 25px;
+  box-shadow: 0 4px 15px rgba(110, 72, 170, 0.3);
+  border-left: 5px solid #4b2e83;
+}
+
 .label {
   font-size: 14px;
   font-weight: 500;
-  color: #2d3748;
+  color: #521c71;
   margin-bottom: 6px;
   display: block;
 }
