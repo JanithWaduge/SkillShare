@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 request.getServletPath().startsWith("/api/posts") ||
                 request.getServletPath().startsWith("/api/user/all") ||
                 request.getServletPath().startsWith("/api/tutorials") ||
-
+                request.getServletPath().startsWith("/api/quizzes") ||
                 request.getServletPath().startsWith("/login")) {
             filterChain.doFilter(request, response);
             return;
