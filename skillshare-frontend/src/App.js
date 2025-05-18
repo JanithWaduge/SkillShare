@@ -272,35 +272,46 @@ function App() {
             <div className="app-container">
               <div className="header">
                 <h1 className="app-title">Talento</h1>
+
                 <div className="header-actions">
-                  <div className="profile-container" ref={menuRef}>
-                    <img
-                      src={user?.profileImageUrl || 'https://via.placeholder.com/40'}
-                      alt="Profile"
-                      className="profile-icon"
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    />
-                    {showProfileMenu && (
-                      <div className="profile-menu">
-                        <button
-                          className="profile-menu-item"
-                          onClick={() => {
-                            setShowProfileMenu(false);
-                            navigate('/profile');
-                          }}
-                        >
-                          View Profile
-                        </button>
-                        <button
-                          className="profile-menu-item logout"
-                          onClick={handleLogout}
-                        >
-                          Logout
-                        </button>
-                      </div>
-                    )}
+                  <div className="header-buttons">
+                    <button
+                      className="tutorials-button"
+                      onClick={() => window.location.href = 'http://localhost:3000/tutorials'}
+                    >
+                      View Tutorials
+                    </button>
+
+                    <div className="profile-container" ref={menuRef}>
+                      <img
+                        src={user?.profileImageUrl || 'https://via.placeholder.com/40'}
+                        alt="Profile"
+                        className="profile-icon"
+                        onClick={() => setShowProfileMenu(!showProfileMenu)}
+                      />
+                      {showProfileMenu && (
+                        <div className="profile-menu">
+                          <button
+                            className="profile-menu-item"
+                            onClick={() => {
+                              setShowProfileMenu(false);
+                              navigate('/profile');
+                            }}
+                          >
+                            View Profile
+                          </button>
+                          <button
+                            className="profile-menu-item logout"
+                            onClick={handleLogout}
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+
               </div>
               <div className="content-wrapper">
                 {posts.length === 0 ? (
