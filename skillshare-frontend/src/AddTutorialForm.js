@@ -70,7 +70,8 @@ const AddTutorialForm = () => {
         steps: [''],
         resources: [''],
         createdBy: '',
-        createdAt: ''
+        createdAt: '',
+        quizId: ''
       });
       setImage(null);
 
@@ -106,6 +107,14 @@ const AddTutorialForm = () => {
 
       <input type="text" name="createdBy" placeholder="Created By" value={formData.createdBy} onChange={handleChange} required />
       <input type="datetime-local" name="createdAt" value={formData.createdAt} onChange={handleChange} required />
+
+      <input
+        type="text"
+        name="quizId"
+        placeholder="Quiz ID"
+        value={formData.quizId}
+        onChange={handleChange}
+      />
 
       <label>Upload Image</label>
       <input
