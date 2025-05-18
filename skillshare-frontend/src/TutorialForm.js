@@ -91,6 +91,15 @@ const TutorialForm = () => {
       <input type="text" name="createdBy" value={formData.createdBy} onChange={handleChange} placeholder="Created By" />
       <input type="datetime-local" name="createdAt" value={formData.createdAt} onChange={handleChange} />
 
+      <input
+        type="text"
+        name="quizId"
+        value={formData.quizId || ''}
+        onChange={handleChange}
+        placeholder="Quiz ID"
+      />
+
+
       {formData.imageUrl && (
         <div style={{ marginBottom: '15px' }}>
           <label>Current Image</label>
