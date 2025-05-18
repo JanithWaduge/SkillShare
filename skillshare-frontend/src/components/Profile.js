@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { faRobot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import api from '../axiosConfig';
 import Alert from './Alert';
 import './profile.css';
@@ -18,6 +20,8 @@ function Profile() {
   const [alert, setAlert] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [roadmap, setRoadmap] = useState(null);
+  const [showRoadmap, setShowRoadmap] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -138,6 +142,29 @@ function Profile() {
     }
   };
 
+  const handleFetchRoadmap = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get('/api/user/career-roadmap', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRoadmap(response.data.roadmap);
+      setShowRoadmap(true);
+      setAlert({
+        message: 'Career roadmap generated successfully!',
+        type: 'success',
+      });
+    } catch (error) {
+      setAlert({
+        message: error.response?.data?.error || 'Failed to generate career roadmap. Please try again.',
+        type: 'error',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading && !user) {
     return <div className="loading">Loading...</div>;
   }
@@ -252,6 +279,28 @@ function Profile() {
             </div>
           )}
         </div>
+        {showRoadmap && roadmap && (
+          <div className="section">
+            <h2 className="section-title">
+              <FontAwesomeIcon icon={faRobot} style={{marginRight: '10px'}} />
+              AI-Powered Career Roadmap
+            </h2>
+            <div className="roadmap-container">
+              <div className="roadmap-header">
+                <FontAwesomeIcon icon={faRobot} style={{marginRight: '8px'}} />
+                AI-Powered Career Roadmap
+              </div>
+              <pre className="roadmap-text">{roadmap}</pre>
+            </div>
+            <button
+              onClick={() => setShowRoadmap(false)}
+              className="button"
+              disabled={isLoading}
+            >
+              Hide Roadmap
+            </button>
+          </div>
+        )}
         <div className="actions">
           {isEditing ? (
             <>
@@ -278,6 +327,13 @@ function Profile() {
                 disabled={isLoading}
               >
                 Edit Profile
+              </button>
+              <button
+                onClick={handleFetchRoadmap}
+                className="button"
+                disabled={isLoading}
+              >
+                Show Roadmap AI
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}

@@ -81,6 +81,8 @@
   color: #1a202c;
   margin: 0 0 15px;
   letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
 }
 
 .text {
@@ -373,4 +375,38 @@
 
 .alert-close:hover {
   opacity: 1;
+}
+
+/* Roadmap styles */
+.roadmap-container {
+  background-color: #000;
+  border-radius: 8px;
+  padding: 1px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.roadmap-header {
+  background-color: #333;
+  color: #fff;
+  padding: 12px 15px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.roadmap-text {
+  white-space: pre-wrap;
+  background-color: #000;
+  color: #fff;
+  padding: 15px;
+  border-radius: 0 0 8px 8px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 0;
 }
