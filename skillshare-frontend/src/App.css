@@ -2,11 +2,11 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f4f8;
+  background: #B0C4DE;
 }
 
 .app-container {
-  padding: 20px;
+  padding: 1px;
   min-height: 100vh;
 }
 
@@ -364,7 +364,7 @@ select:hover {
 .post-media {
   max-width: 100%;
   height: auto;
-  margin-top: 10px;
+  margin-top: 5px;
   border-radius: 8px;
 }
 
