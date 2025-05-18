@@ -32,4 +32,21 @@ public class QuizController {
     public Quiz createQuiz(@RequestBody Quiz quiz) {
         return quizRepository.save(quiz);
     }
-}
+
+    @PutMapping("/{quizId}")
+    public ResponseEntity<Quiz> updateQuiz(@PathVariable String quizId, @RequestBody Quiz updatedQuiz) {
+        return quizRepository.findByQuizId(quizId).map(existingQuiz -> {
+            existingQuiz.setTitle(updatedQuiz.getTitle());
+            existingQuiz.setQuestions(updatedQuiz.getQuestions());
+            return ResponseEntity.ok(quizRepository.save(existingQuiz));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{quizId}")
+    public ResponseEntity<Object> deleteQuiz(@PathVariable String quizId) {
+        return quizRepository.findByQuizId(quizId).map(existingQuiz -> {
+            quizRepository.delete(existingQuiz);
+            return ResponseEntity.noContent().build();
+        }).orElse(ResponseEntity.notFound().build());
+    }
+    }
