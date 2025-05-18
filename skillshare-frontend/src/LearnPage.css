@@ -70,3 +70,11 @@
     flex-direction: column;
   }
 }
+
+.tutorial-learn-image {
+  width: 60%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
