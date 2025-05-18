@@ -8,7 +8,6 @@ function TutorialList() {
   const [tutorials, setTutorials] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch all tutorials from backend
   useEffect(() => {
     axios.get('http://localhost:8081/api/tutorials')
       .then(response => {
@@ -45,6 +44,14 @@ function TutorialList() {
       <div className="tutorial-container">
         {tutorials.map((tutorial) => (
           <div key={tutorial.id || tutorial._id} className="tutorial-card">
+
+            {tutorial.imageUrl && (
+              <img
+                src={`http://localhost:8081${tutorial.imageUrl}`}
+                alt={tutorial.title}
+                className="tutorial-image"
+              />
+            )}
             <h2>{tutorial.title}</h2>
             <p>{tutorial.description}</p>
 
