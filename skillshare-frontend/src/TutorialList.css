@@ -58,3 +58,11 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+.tutorial-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}

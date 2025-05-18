@@ -53,6 +53,14 @@ function LearnPage() {
             </>
           )}
 
+           {tutorial.imageUrl && (
+                        <img
+                          src={`http://localhost:8081${tutorial.imageUrl}`}
+                          alt={tutorial.title}
+                          className="tutorial-learn-image"
+                        />
+           )}
+
           {tutorial.steps?.length > 0 && (
             <>
               <h3>Steps:</h3>
