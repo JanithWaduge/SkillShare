@@ -11,6 +11,7 @@ import ViewAllTutorials from './ViewAllTutorialsAdmin';
 import AddTutorialForm from './AddTutorialForm';
 import TutorialForm from './TutorialForm';
 import Profile from './components/Profile';
+import QuizPage from './QuizPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -27,6 +28,7 @@ root.render(
         <Route path="/admin/tutorials" element={<ViewAllTutorials />} />
         <Route path="/admin/tutorials/add" element={<AddTutorialForm />} />
         <Route path="/admin/tutorial-form/:id" element={<TutorialForm />} />
+        <Route path="/quiz/:id" element={<QuizPage />} />
       </Routes>
     </Router>
   </React.StrictMode>
