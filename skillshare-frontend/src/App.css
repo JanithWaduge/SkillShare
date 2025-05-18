@@ -367,3 +367,34 @@ select:hover {
   margin-top: 10px;
   border-radius: 8px;
 }
+
+.tutorials-button {
+  background-color: #272757;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-right: 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tutorials-button:hover {
+  background-color: #0047AB;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1b2a41;
+  padding: 15px 30px;
+  color: white;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
