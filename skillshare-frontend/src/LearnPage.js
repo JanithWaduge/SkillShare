@@ -93,20 +93,20 @@ function LearnPage() {
 
         <div className="sidebar">
           <div className="quiz-section">
-            <h3>Quizzes</h3>
-            <div className="quiz-buttons">
-              {(tutorial.quizzes || []).map((quiz, index) => (
-                <button
-                  key={quiz.id || index}
-                  className="quiz-button"
-                  onClick={() => navigate(`/quiz/${quiz.id || index}`)}
-                >
-                  {quiz.label || `Quiz ${index + 1}`}
-                </button>
-              ))}
-            </div>
+            <h3>Quiz</h3>
+            {tutorial.quizId ? (
+              <button
+                className="quiz-button"
+                onClick={() => navigate(`/quiz/${tutorial.quizId}`)}
+              >
+                Take Quiz
+              </button>
+            ) : (
+              <p>No quiz available</p>
+            )}
           </div>
         </div>
+
       </div>
     </div>
   );

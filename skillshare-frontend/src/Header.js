@@ -8,7 +8,6 @@ function Header() {
       <nav>
         <a href="http://localhost:3000/posts">Home</a>
         <a href="http://localhost:3000/tutorials">Tutorials</a>
-        <a href="http://localhost:3000/quizzes">Quizzes</a>
       </nav>
     </header>
   );
